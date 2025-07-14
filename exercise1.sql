@@ -1,5 +1,7 @@
 create database Exercise1;
 
+use Exercise1;
+
 --Task1
 create table Plant(
 	PlantId int identity(1,1) primary key, --(identity(1,1) means start from 1 with increment of 1)
