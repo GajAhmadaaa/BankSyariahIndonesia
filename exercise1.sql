@@ -6,11 +6,10 @@ use Exercise1;
 create table Plant(
 	PlantId int identity(1,1) primary key, --(identity(1,1) means start from 1 with increment of 1)
 	PlantName varchar(30) not null,
-	City varchar(20) not null,
-	Country varchar(20) not null,
+	City varchar(50) not null,
+	Country varchar(50) not null,
 	YearStarted int,
-	PlantLength float,
-	PlantWidth float,
+	PlantArea float,
 	PhoneNumber int,
 	PlantStatus BIT not null -- or PlantStatus varchar(10) CHECK (PlantStatus IN ('Active', 'Inactive', 'Others')) not null
 );
@@ -20,7 +19,7 @@ create table CarModel(
 	ModelId int identity(1,1) primary key,
 	ModelName varchar(30) not null,
 	ModelType varchar(10) not null, -- or ModelType varchar(10) CHECK (ModelType IN ('Sedan', 'SUV', 'MPV')) not null
-	EngineCapacity int,
+	EngineCapacity float,
 	YearLaunched int,
 	FuelType varchar(10), -- or FuelType varchar(10) CHECK (ModelType IN ('Petrol', 'Diesel', 'Electric'))
 	BasePrice int
@@ -33,7 +32,7 @@ create table ProductionPlan(
 	PlanMonth int not null,
 	PlanYear int not null,
 	TargetUnits int not null,
-	Notes varchar(50)
+	Notes text
 );
 
 --Task4
@@ -61,7 +60,7 @@ create table CarSale(
 	Price int not null,
 	PaymentType varchar(10), -- or PaymentType varchar(10) CHECK (PaymentType IN ('Full', 'Credit', 'Others'))
 
-    	foreign key (CustomerId) references Customer(CustomerId),
+	foreign key (CustomerId) references Customer(CustomerId),
 	foreign key (ModelId) references CarModel(ModelId)
 );
 
@@ -71,7 +70,7 @@ create table MaintenanceLog(
 	CustomerId int not null,
 	ModelId int not null,
 	MaintenanceDate date not null,
-	Servicetype varchar(20) not null,
+	ServiceType varchar(20) not null,
 	ServiceCenter varchar(20) not null,
 
 	foreign key (CustomerId) references Customer(CustomerId),
@@ -96,7 +95,7 @@ create table CustomerFeedback(
 	ModelId int not null,
 	FeedbackDate date not null,
 	Rating int not null, -- or Rating int CHECK (Rating IN ('1', '2', '3','4','5'))
-	Comment varchar(100),
+	Comment text,
 
 	foreign key (CustomerId) references Customer(CustomerId),
 	foreign key (ModelId) references CarModel(ModelId)
