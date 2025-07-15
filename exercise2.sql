@@ -95,7 +95,7 @@ SELECT top(5) p.Name AS 'Product Name', SUM(S.OrderQty) 'Total Order Quantity'
 FROM Sales.SalesOrderDetail S
 	INNER JOIN Production.Product P ON  S.ProductID = P.ProductID
 GROUP BY S.ProductID, P.Name
-ORDER BY SUM(S.OrderQty) ASC;
+ORDER BY SUM(S.OrderQty) DESC;
 
 --17
 SELECT PS.Name AS SubcategoryName, COUNT(P.ProductID) 'Count of Product Price > 500'
