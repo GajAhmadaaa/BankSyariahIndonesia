@@ -48,10 +48,11 @@ GO
 --CASE6
 CREATE VIEW vw_SalespersonPerformance
 AS
-SELECT TOP(1) CONCAT(P.FirstName,' ',P.MiddleName,' ',P.LastName) AS Name,
+SELECT CONCAT(P.FirstName,' ',P.MiddleName,' ',P.LastName) AS Name,
 	SUM(SOH.TotalDue) AS TotalSalesAmount,
 	COUNT(SOH.SalesOrderID) AS NumberOrder
 FROM Sales.SalesOrderHeader SOH
 	INNER JOIN Sales.SalesPerson SP ON SOH.SalesPersonID = SP.BusinessEntityID
-	INNER JOIN Person.Person P ON SP.BusinessEntityID = P.BusinessEntityID;
+	INNER JOIN Person.Person P ON SP.BusinessEntityID = P.BusinessEntityID
+GROUP BY CONCAT(P.FirstName,' ',P.MiddleName,' ',P.LastName);
 GO
