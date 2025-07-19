@@ -44,4 +44,3 @@
 - This ensures the stock is updated correctly in the `Inventory` table.
 
 ---
-These scenarios expand the scope of the project and provide additional edge cases for testing.
