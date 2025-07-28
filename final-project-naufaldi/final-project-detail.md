@@ -43,7 +43,7 @@ Dokumentasi ini memetakan proses bisnis penjualan mobil di AutoCar Dealership ke
 | 20  | ServiceHistory         | Layanan purna jual, seperti follow-up servis pertama.                           |
 | 21  | CustomerComplaint      | Catatan keluhan pelanggan terkait produk atau layanan.                          |
 | 22  | WarrantyClaim          | Klaim garansi kendaraan oleh pelanggan.                                         |
-| 23  | DealerInventory        | Data stok mobil di setiap dealer.                                               |
+| 23  | DealerInventory        | Data stok mobil di setiap dealer, termasuk harga, diskon, dan fee per dealer-mobil. |
 | 24  | InventoryTransfer      | Catatan mutasi (perpindahan) stok antar dealer.                                 |
 | 25  | CustomerFeedback       | Feedback atau survey kepuasan pelanggan setelah transaksi.                      |
 
@@ -464,6 +464,73 @@ BEGIN
     UPDATE SalesAgreement SET Status = 'Completed' WHERE SalesAgreementID = @SalesAgreementID;
 END
 ```
+### 4. Stored Procedures Tambahan
+
+#### a. `sp_CreateVehicleRegistration`
+- Digunakan untuk mencatat administrasi kendaraan (STNK, BPKB, pajak, asuransi) setelah transaksi penjualan.
+- **Parameter:**
+  - `@SalesAgreementID INT`
+  - `@RegistrationNumber VARCHAR(50)`
+  - `@OwnershipBookNumber VARCHAR(50)`
+  - `@TaxStatus VARCHAR(50)`
+  - `@InsuranceStatus VARCHAR(50)`
+- **Proses:**
+  1. Validasi SalesAgreementID harus ada.
+  2. Pastikan administrasi untuk transaksi ini belum ada.
+  3. Insert data ke tabel VehicleRegistration.
+- **Contoh:**
+```sql
+EXEC sp_CreateVehicleRegistration 1001, 'B1234XYZ', 'BB123456', 'Aktif', 'Aktif';
+```
+
+#### b. `sp_CreateCustomerComplaint`
+- Digunakan untuk mencatat keluhan pelanggan terkait transaksi atau layanan.
+- **Parameter:**
+  - `@CustomerID INT`
+  - `@SalesAgreementID INT` (opsional)
+  - `@ComplaintDate DATETIME`
+  - `@Description VARCHAR(200)`
+  - `@Status VARCHAR(20)`
+- **Proses:**
+  1. Validasi CustomerID dan (jika diisi) SalesAgreementID.
+  2. Insert data ke tabel CustomerComplaint.
+- **Contoh:**
+```sql
+EXEC sp_CreateCustomerComplaint 2001, 1001, '2025-07-28', 'AC tidak dingin', 'Open';
+```
+
+#### c. `sp_CreatePaymentHistory`
+- Digunakan untuk mencatat pembayaran (DP, pelunasan, cicilan) baik untuk transaksi tunai maupun kredit.
+- **Parameter:**
+  - `@SalesAgreementID INT` (opsional)
+  - `@CreditAppID INT` (opsional)
+  - `@PaymentAmount MONEY`
+  - `@PaymentDate DATE`
+  - `@PaymentType VARCHAR(20)`
+- **Proses:**
+  1. Minimal salah satu ID harus diisi.
+  2. Validasi ID yang diisi harus ada.
+  3. Insert data ke tabel PaymentHistory.
+- **Contoh:**
+```sql
+EXEC sp_CreatePaymentHistory 1001, NULL, 50000000, '2025-07-28', 'DP';
+```
+
+#### d. `sp_CreateWarrantyClaim`
+- Digunakan untuk mencatat klaim garansi kendaraan oleh pelanggan.
+- **Parameter:**
+  - `@CustomerID INT`
+  - `@SalesAgreementID INT` (opsional)
+  - `@ClaimDate DATETIME`
+  - `@Description VARCHAR(200)`
+  - `@Status VARCHAR(20)`
+- **Proses:**
+  1. Validasi CustomerID dan (jika diisi) SalesAgreementID.
+  2. Insert data ke tabel WarrantyClaim.
+- **Contoh:**
+```sql
+EXEC sp_CreateWarrantyClaim 2001, 1001, '2025-07-28', 'Klakson mati', 'Open';
+```
 
 ## 8. Functions
 
@@ -492,6 +559,17 @@ SELECT dbo.fn_GetFeeAmount(@DealerInventoryID);
 -- Mendapatkan harga akhir
 SELECT dbo.fn_GetFinalPrice(@DealerInventoryID);
 ```
+#### d. `fn_CalculateTotalPrice`
+- Fungsi ini digunakan untuk menghitung total harga setelah diskon sederhana.
+- **Parameter:**  
+  - `@Price MONEY` : Harga awal mobil  
+  - `@Discount MONEY` : Nilai diskon (bisa null)
+- **Return:**  
+  - Harga akhir setelah diskon (`@Price - ISNULL(@Discount, 0)`)
+- **Contoh penggunaan:**
+```sql
+SELECT dbo.fn_CalculateTotalPrice(300000000, 15000000); -- hasil: 285000000
+```
 
 ## 9. Views
 
@@ -501,6 +579,80 @@ View ini akan digunakan untuk menampilkan laporan penjualan, termasuk harga, dis
 
 **Nama:** `vw_Sales_Report`
 
+#### 4. View Tambahan
+
+##### a. `vw_CarStock`
+- View ini menampilkan stok mobil yang tersedia di setiap dealer beserta detail mobil dan harga.
+- **Kolom:** DealerID, DealerName, CarID, CarModel, CarType, BasePrice, StockDealer, Price, DiscountPercent, FeePercent
+- **Fungsi:** Memudahkan monitoring stok mobil per dealer dan detail harga.
+- **Cuplikan kode:**
+```sql
+CREATE VIEW vw_CarStock AS
+SELECT
+    d.DealerID,
+    d.Name AS DealerName,
+    c.CarID,
+    c.Model AS CarModel,
+    c.CarType,
+    c.BasePrice,
+    i.Stock AS StockDealer,
+    i.Price,
+    i.DiscountPercent,
+    i.FeePercent
+FROM
+    DealerInventory i
+    JOIN Car c ON i.CarID = c.CarID
+    JOIN Dealer d ON i.DealerID = d.DealerID
+WHERE
+    i.Stock > 0;
+```
+
+##### b. `vw_PaymentStatus`
+- View ini menampilkan status pembayaran setiap transaksi penjualan.
+- **Kolom:** SalesAgreementID, CustomerName, TransactionDate, TotalAmount, TotalPaid, PaymentStatus, PaymentCount
+- **Fungsi:** Memantau apakah transaksi sudah lunas atau belum berdasarkan total pembayaran yang masuk.
+- **Cuplikan kode:**
+```sql
+CREATE VIEW vw_PaymentStatus AS
+SELECT
+    sa.SalesAgreementID,
+    c.Name AS CustomerName,
+    sa.TransactionDate,
+    sa.TotalAmount,
+    SUM(ph.PaymentAmount) AS TotalPaid,
+    CASE
+        WHEN sa.TotalAmount IS NOT NULL AND SUM(ph.PaymentAmount) >= sa.TotalAmount THEN 'Paid'
+        ELSE 'Unpaid'
+    END AS PaymentStatus,
+    COUNT(ph.PaymentHistoryID) AS PaymentCount
+FROM
+    SalesAgreement sa
+    JOIN Customer c ON sa.CustomerID = c.CustomerID
+    LEFT JOIN PaymentHistory ph ON sa.SalesAgreementID = ph.SalesAgreementID
+GROUP BY
+    sa.SalesAgreementID, c.Name, sa.TransactionDate, sa.TotalAmount;
+```
+
+##### c. `vw_WarrantyClaimStatus`
+- View ini menampilkan status klaim garansi kendaraan oleh pelanggan.
+- **Kolom:** WarrantyClaimID, CustomerName, SalesAgreementID, TransactionDate, ClaimDate, ClaimDescription, ClaimStatus
+- **Fungsi:** Memantau klaim garansi yang diajukan pelanggan beserta status dan detail transaksi terkait.
+- **Cuplikan kode:**
+```sql
+CREATE VIEW vw_WarrantyClaimStatus AS
+SELECT
+    wc.WarrantyClaimID,
+    c.Name AS CustomerName,
+    sa.SalesAgreementID,
+    sa.TransactionDate,
+    wc.ClaimDate,
+    wc.Description AS ClaimDescription,
+    wc.Status AS ClaimStatus
+FROM
+    WarrantyClaim wc
+    JOIN Customer c ON wc.CustomerID = c.CustomerID
+    LEFT JOIN SalesAgreement sa ON wc.SalesAgreementID = sa.SalesAgreementID;
+```
 **Proses:**
 1.  Menggabungkan data dari tabel `SalesAgreement`, `SalesAgreementDetail`, `Customer`, `SalesPerson`, dan `Car`.
 2.  Menampilkan informasi detail tentang setiap transaksi.
@@ -529,6 +681,41 @@ FROM
 ```
 
 ### 2. Status Kredit
+### 11. Trigger Tambahan
+
+#### a. `trg_UpdatePaymentStatus`
+- Trigger ini digunakan untuk mengupdate status transaksi penjualan menjadi 'Paid' (Lunas) secara otomatis jika total pembayaran yang masuk ke PaymentHistory sudah sama atau lebih besar dari nilai total transaksi (TotalAmount) pada SalesAgreement.
+- **Event:** AFTER INSERT, UPDATE pada tabel PaymentHistory
+- **Proses:**
+  1. Setiap ada pembayaran baru atau update pembayaran, trigger akan menjumlahkan seluruh PaymentAmount untuk setiap SalesAgreementID.
+  2. Jika total pembayaran >= TotalAmount, maka status transaksi di SalesAgreement diubah menjadi 'Paid'.
+- **Contoh skenario:**
+  - Customer melakukan beberapa kali pembayaran (DP, cicilan, pelunasan) hingga totalnya memenuhi TotalAmount, maka status otomatis menjadi 'Paid'.
+- **Cuplikan kode:**
+```sql
+CREATE TRIGGER trg_UpdatePaymentStatus
+ON PaymentHistory
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE sa
+    SET Status = 'Paid'
+    FROM SalesAgreement sa
+    WHERE sa.SalesAgreementID IN (
+        SELECT p.SalesAgreementID
+        FROM inserted p
+        WHERE p.SalesAgreementID IS NOT NULL
+    )
+    AND sa.TotalAmount IS NOT NULL
+    AND (
+        SELECT SUM(PaymentAmount)
+        FROM PaymentHistory
+        WHERE SalesAgreementID = sa.SalesAgreementID
+    ) >= sa.TotalAmount;
+END
+```
 View ini akan digunakan untuk menampilkan status pengajuan kredit.
 
 **Nama:** `vw_Credit_Status`

@@ -10,7 +10,7 @@ Repositori ini berisi skema database dan query SQL yang telah direfaktor untuk m
 .
 ├── final-project-data.sql
 ├── final-project-documentation.md
-├── final-project-draft.md
+├── final-project-detail.md
 ├── final-project-schema.sql
 ├── final-project.pdf
 ├── Function/
@@ -37,6 +37,19 @@ Repositori ini berisi skema database dan query SQL yang telah direfaktor untuk m
     ├── vw_Sales_Report.sql
     └── vw_WarrantyClaimStatus.sql
 ```
+
+## 2a. Ringkasan Pemetaan Proses Bisnis ke Entitas/Tabel
+
+| Proses Bisnis                | Entitas/Tabel Utama         | Makna/Deskripsi Singkat                                                                 |
+|------------------------------|-----------------------------|----------------------------------------------------------------------------------------|
+| Konsultasi Awal              | ConsultHistory, Dealer, Customer, SalesPerson, Car | Data konsultasi awal, dealer, pelanggan, petugas penjualan, dan mobil yang diminati |
+| Test Drive                   | TestDrive                   | Catatan test drive                                                                      |
+| Kesepakatan & Booking Fee    | Booking, LetterOfIntent, LetterOfIntentDetail | Pencatatan booking fee, dokumen LOI (header), dan detail unit mobil di LOI             |
+| Proses Kredit                | CreditApplication, LeasingCompany, CreditDocument | Pengajuan kredit, data leasing, dan dokumen pendukung                          |
+| Pembayaran & Administrasi    | PaymentHistory, VehicleRegistration, SalesAgreement, SalesAgreementDetail | Pembayaran DP/lunas, administrasi, transaksi penjualan, dan detail mobil yang dibeli   |
+| Serah Terima Mobil           | CarDelivery, PreDeliveryInspection, SalesAgreement, SalesAgreementDetail, CarDeliverySchedule | Proses PDI, serah terima mobil, penjadwalan pengiriman, transaksi, dan detail mobil    |
+| Pasca-Penjualan              | ServiceHistory, CustomerComplaint, WarrantyClaim, CustomerFeedback, SalesAgreement | Layanan follow-up servis pertama, penanganan keluhan, klaim garansi, feedback pelanggan, dan transaksi |
+| Manajemen Stok & Mutasi      | DealerInventory, InventoryTransfer, Dealer, Car | Pengelolaan stok mobil dan mutasi antar dealer                                          |
 
 ## 3. Deskripsi File Utama
 
@@ -74,11 +87,10 @@ Objek database seperti stored procedure, function, view, dan trigger dikelompokk
   - [`vw_WarrantyClaimStatus.sql`](View/vw_WarrantyClaimStatus.sql)
 
 ### [`final-project-documentation.md`](final-project-documentation.md)
-Dokumentasi ini (file ini) berisi penjelasan rinci tentang:
-- Makna setiap tabel.
-- Desain kolom untuk setiap tabel.
-- Relasi antar tabel beserta diagram ERD.
-- Penjelasan untuk setiap stored procedure, function, view, dan trigger.
+Dokumentasi ini berisi ringkasan struktur file dan gambaran umum isi repositori. Untuk penjelasan teknis detail, silakan lihat file detail.
+
+### [`final-project-detail.md`](final-project-detail.md)
+Dokumentasi ini berisi penjelasan teknis lengkap: detail tabel, kolom, relasi, ERD, serta contoh dan penjelasan setiap objek database (stored procedure, function, view, trigger).
 
 ## 4. Desain Database
 
@@ -107,7 +119,7 @@ Dokumentasi ini (file ini) berisi penjelasan rinci tentang:
 | 20  | ServiceHistory         | Layanan purna jual, seperti follow-up servis pertama.                           |
 | 21  | CustomerComplaint      | Catatan keluhan pelanggan terkait produk atau layanan.                          |
 | 22  | WarrantyClaim          | Klaim garansi kendaraan oleh pelanggan.                                         |
-| 23  | DealerInventory        | Data stok mobil di setiap dealer, termasuk harga, diskon, dan fee per dealer-mobil. |
+| 23  | DealerInventory        | Data stok mobil di setiap dealer.                                               |
 | 24  | InventoryTransfer      | Catatan mutasi (perpindahan) stok antar dealer.                                 |
 | 25  | CustomerFeedback       | Feedback atau survey kepuasan pelanggan setelah transaksi.                      |
 
