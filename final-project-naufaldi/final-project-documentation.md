@@ -1,20 +1,41 @@
-# Final Project: Business Process Modeling for AutoCar Dealership
+# Final Project: Business Process Modeling for AutoCar Dealership (Refactored)
 
 ## 1. Pendahuluan
 
-Repositori ini berisi skema database dan query SQL yang dirancang untuk memodelkan proses bisnis di AutoCar Dealership. Desain ini mencakup seluruh alur penjualan mobil, mulai dari konsultasi awal hingga layanan purna jual, dan dirancang untuk mendukung operasi di berbagai cabang dealer.
+Repositori ini berisi skema database dan query SQL yang telah direfaktor untuk memodelkan proses bisnis di AutoCar Dealership. Desain ini mencakup seluruh alur penjualan mobil, mulai dari konsultasi awal hingga layanan purna jual, dan dirancang untuk mendukung operasi di berbagai cabang dealer.
 
 ## 2. Struktur File
 
 ```
 .
+├── final-project-data.sql
 ├── final-project-documentation.md
 ├── final-project-draft.md
 ├── final-project-schema.sql
-├── final-project-data.sql
-├── scenarios.md
-├── scenarios-test-data.sql
-└── FinalProject.bak
+├── final-project.pdf
+├── Function/
+│   ├── fn_CalculateTotalPrice.sql
+│   ├── fn_GetDiscountAmount.sql
+│   ├── fn_GetFeeAmount.sql
+│   └── fn_GetFinalPrice.sql
+├── Stored Procedure/
+│   ├── sp_ApplyForCredit.sql
+│   ├── sp_CarDelivery.sql
+│   ├── sp_CreateAdministration.sql
+│   ├── sp_CreateComplaint.sql
+│   ├── sp_CreatePayment.sql
+│   ├── sp_CreateWarrantyClaim.sql
+│   └── sp_RegisterCustomer.sql
+├── Trigger/
+│   ├── trg_UpdatePaymentStatus.sql
+│   └── trg_UpdateStockAfterSale.sql
+└── View/
+    ├── vw_Available_Cars.sql
+    ├── vw_CarStock.sql
+    ├── vw_Credit_Status.sql
+    ├── vw_PaymentStatus.sql
+    ├── vw_Sales_Report.sql
+    └── vw_WarrantyClaimStatus.sql
 ```
 
 ## 3. Deskripsi File Utama
@@ -24,10 +45,33 @@ File ini berisi seluruh skrip SQL untuk:
 - Membuat database `FinalProject`.
 - Membuat semua tabel yang diperlukan, lengkap dengan kolom, tipe data, dan constraint.
 - Mendefinisikan relasi antar tabel menggunakan foreign key.
-- Membuat stored procedures untuk proses bisnis utama.
-- Membuat functions untuk kalkulasi.
-- Membuat views untuk pelaporan.
-- Membuat triggers untuk otomatisasi.
+
+### Stored Procedures, Functions, Views, Triggers
+Objek database seperti stored procedure, function, view, dan trigger dikelompokkan dalam folder masing-masing untuk kemudahan pengelolaan. Berikut adalah daftar file yang ada:
+
+- **Function:**
+  - [`fn_CalculateTotalPrice.sql`](Function/fn_CalculateTotalPrice.sql)
+  - [`fn_GetDiscountAmount.sql`](Function/fn_GetDiscountAmount.sql)
+  - [`fn_GetFeeAmount.sql`](Function/fn_GetFeeAmount.sql)
+  - [`fn_GetFinalPrice.sql`](Function/fn_GetFinalPrice.sql)
+- **Stored Procedure:**
+  - [`sp_ApplyForCredit.sql`](Stored%20Procedure/sp_ApplyForCredit.sql)
+  - [`sp_CarDelivery.sql`](Stored%20Procedure/sp_CarDelivery.sql)
+  - [`sp_CreateAdministration.sql`](Stored%20Procedure/sp_CreateAdministration.sql)
+  - [`sp_CreateComplaint.sql`](Stored%20Procedure/sp_CreateComplaint.sql)
+  - [`sp_CreatePayment.sql`](Stored%20Procedure/sp_CreatePayment.sql)
+  - [`sp_CreateWarrantyClaim.sql`](Stored%20Procedure/sp_CreateWarrantyClaim.sql)
+  - [`sp_RegisterCustomer.sql`](Stored%20Procedure/sp_RegisterCustomer.sql)
+- **Trigger:**
+  - [`trg_UpdatePaymentStatus.sql`](Trigger/trg_UpdatePaymentStatus.sql)
+  - [`trg_UpdateStockAfterSale.sql`](Trigger/trg_UpdateStockAfterSale.sql)
+- **View:**
+  - [`vw_Available_Cars.sql`](View/vw_Available_Cars.sql)
+  - [`vw_CarStock.sql`](View/vw_CarStock.sql)
+  - [`vw_Credit_Status.sql`](View/vw_Credit_Status.sql)
+  - [`vw_PaymentStatus.sql`](View/vw_PaymentStatus.sql)
+  - [`vw_Sales_Report.sql`](View/vw_Sales_Report.sql)
+  - [`vw_WarrantyClaimStatus.sql`](View/vw_WarrantyClaimStatus.sql)
 
 ### [`final-project-documentation.md`](final-project-documentation.md)
 Dokumentasi ini (file ini) berisi penjelasan rinci tentang:
@@ -39,58 +83,94 @@ Dokumentasi ini (file ini) berisi penjelasan rinci tentang:
 ## 4. Desain Database
 
 ### Makna Setiap Entitas/Tabel
-| No. | Tabel              | Makna/Deskripsi                                                                 |
-|-----|--------------------|---------------------------------------------------------------------------------|
-| 1   | LetterOfIntent     | Header dokumen LOI, berisi info umum pemesanan dan pelanggan                    |
-| 2   | LOIDetail          | Rincian unit mobil yang dipesan dalam satu LOI (bisa lebih dari satu mobil per LOI) |
-| 3   | Transaction        | Catatan transaksi penjualan yang dibuat setelah pembayaran dan administrasi selesai |
-| 4   | TransactionDetail  | Rincian unit mobil yang dibeli dalam satu transaksi (bisa lebih dari satu mobil per transaksi) |
-| 5   | Consultation       | Catatan konsultasi awal: kebutuhan, preferensi, tanggal, dan hasil diskusi      |
-| 6   | Dealer             | Data dealer AutoCar, lokasi, dan identitas dealer                               |
-| 7   | Customer           | Menyimpan data pelanggan yang melakukan pembelian mobil                         |
-| 8   | SalesOfficer       | Data petugas penjualan yang menangani pelanggan                                 |
-| 9   | Car                | Data mobil yang tersedia untuk dijual di setiap dealer                          |
-| 10  | TestDrive          | Catatan aktivitas test drive oleh pelanggan                                     |
-| 11  | Negotiation        | Riwayat negosiasi harga, diskon, atau paket aksesoris                           |
-| 12  | Booking            | Data pembayaran booking fee dan status booking                                  |
-| 13  | CreditApplication  | Data pengajuan kredit oleh pelanggan                                            |
-| 14  | Leasing            | Data perusahaan leasing yang bekerja sama                                       |
-| 15  | Document           | Dokumen pendukung pengajuan kredit (KTP, slip gaji, dll)                        |
-| 16  | Payment            | Catatan pembayaran DP, pelunasan, atau cicilan kredit                           |
-| 17  | Administration     | Proses administrasi STNK, BPKB, pajak, asuransi                                 |
-| 18  | Delivery           | Proses serah terima mobil ke pelanggan                                          |
-| 19  | DeliverySchedule   | Penjadwalan pengiriman kendaraan ke pelanggan                                   |
-| 20  | Inspection         | Catatan Pre-Delivery Inspection (PDI) oleh teknisi                              |
-| 21  | AfterSalesService  | Layanan purna jual, seperti follow-up servis pertama                            |
-| 22  | Complaint          | Catatan keluhan pelanggan terkait produk atau layanan                           |
-| 23  | WarrantyClaim      | Klaim garansi kendaraan oleh pelanggan                                          |
-| 24  | Inventory          | Data stok mobil di setiap dealer                                                |
-| 25  | StockMutation      | Catatan mutasi (perpindahan) stok antar dealer                                  |
-| 26  | FeedbackSurvey     | Feedback atau survey kepuasan pelanggan setelah transaksi                       |
+| No. | Tabel                  | Makna/Deskripsi                                                                 |
+|-----|------------------------|---------------------------------------------------------------------------------|
+| 1   | LetterOfIntent         | Header dokumen LOI, berisi info umum pemesanan dan pelanggan.                   |
+| 2   | LetterOfIntentDetail   | Rincian unit mobil yang dipesan dalam satu LOI.                                 |
+| 3   | SalesAgreement         | Catatan transaksi penjualan yang dibuat setelah pembayaran dan administrasi selesai. |
+| 4   | SalesAgreementDetail   | Rincian unit mobil yang dibeli dalam satu transaksi.                              |
+| 5   | ConsultHistory         | Catatan konsultasi awal: kebutuhan, preferensi, tanggal, dan hasil diskusi.     |
+| 6   | Dealer                 | Data dealer AutoCar, lokasi, dan identitas dealer.                              |
+| 7   | Customer               | Menyimpan data pelanggan yang melakukan pembelian mobil.                        |
+| 8   | SalesPerson            | Data petugas penjualan yang menangani pelanggan.                                |
+| 9   | Car                    | Data mobil yang tersedia untuk dijual di setiap dealer.                         |
+| 10  | TestDrive              | Catatan aktivitas test drive oleh pelanggan.                                    |
+| 11  | Booking                | Data pembayaran booking fee dan status booking.                                 |
+| 12  | CreditApplication      | Data pengajuan kredit oleh pelanggan.                                           |
+| 13  | LeasingCompany         | Data perusahaan leasing yang bekerja sama.                                      |
+| 14  | CreditDocument         | Dokumen pendukung pengajuan kredit (KTP, slip gaji, dll).                       |
+| 15  | PaymentHistory         | Catatan pembayaran DP, pelunasan, atau cicilan kredit.                          |
+| 16  | VehicleRegistration    | Proses administrasi STNK, BPKB, pajak, asuransi.                                |
+| 17  | CarDelivery            | Proses serah terima mobil ke pelanggan.                                         |
+| 18  | CarDeliverySchedule    | Penjadwalan pengiriman kendaraan ke pelanggan.                                  |
+| 19  | PreDeliveryInspection  | Catatan Pre-Delivery Inspection (PDI) oleh teknisi.                             |
+| 20  | ServiceHistory         | Layanan purna jual, seperti follow-up servis pertama.                           |
+| 21  | CustomerComplaint      | Catatan keluhan pelanggan terkait produk atau layanan.                          |
+| 22  | WarrantyClaim          | Klaim garansi kendaraan oleh pelanggan.                                         |
+| 23  | DealerInventory        | Data stok mobil di setiap dealer, termasuk harga, diskon, dan fee per dealer-mobil. |
+| 24  | InventoryTransfer      | Catatan mutasi (perpindahan) stok antar dealer.                                 |
+| 25  | CustomerFeedback       | Feedback atau survey kepuasan pelanggan setelah transaksi.                      |
 
 ### Diagram Relasi (ERD)
 ```mermaid
 erDiagram
-    Dealer ||--o{ SalesOfficer : memiliki
-    Dealer ||--o{ Inventory : memiliki
-    Dealer ||--o{ Consultation : menangani
-    Customer ||--o{ Consultation : melakukan
-    Customer ||--o{ LetterOfIntent : membuat
-    LetterOfIntent ||--o{ LOIDetail : berisi
-    LetterOfIntent ||--o{ Booking : terkait
-    CreditApplication }|--|| Leasing : terkait
-    LetterOfIntent ||--o{ CreditApplication : terkait
-    CreditApplication ||--o{ Payment : terkait
-    Transaction ||--o{ TransactionDetail : berisi
-    TransactionDetail }|--|| LOIDetail : terkait
-    Transaction ||--o{ Payment : terkait
-    Transaction ||--o{ Delivery : terkait
-    Delivery ||--o{ DeliverySchedule : dijadwalkan
-    Customer ||--o{ Complaint : mengajukan
-    Customer ||--o{ WarrantyClaim : klaim
-    Customer ||--o{ FeedbackSurvey : feedback
-    Car ||--o{ Inventory : tersedia
-    Inventory ||--o{ StockMutation : mutasi
+    Dealer ||--o{ SalesPerson : "memiliki"
+    Dealer ||--o{ DealerInventory : "menyimpan"
+    Dealer ||--o{ ConsultHistory : "menangani"
+    Dealer ||--o{ TestDrive : "menyelenggarakan"
+    Dealer ||--o{ LetterOfIntent : "menerima"
+    Dealer ||--o{ SalesAgreement : "melakukan"
+    Dealer }o--|| InventoryTransfer : "dari"
+    Dealer }o--|| InventoryTransfer : "ke"
+
+    Customer ||--o{ ConsultHistory : "melakukan"
+    Customer ||--o{ TestDrive : "melakukan"
+    Customer ||--o{ LetterOfIntent : "membuat"
+    Customer ||--o{ SalesAgreement : "menandatangani"
+    Customer ||--o{ CustomerComplaint : "mengajukan"
+    Customer ||--o{ WarrantyClaim : "mengklaim"
+    Customer ||--o{ CustomerFeedback : "memberi"
+
+    SalesPerson ||--o{ ConsultHistory : "melayani"
+    SalesPerson ||--o{ TestDrive : "mendampingi"
+    SalesPerson ||--o{ LetterOfIntent : "mengelola"
+    SalesPerson ||--o{ SalesAgreement : "menangani"
+
+    Car ||--o{ DealerInventory : "tersedia di"
+    Car ||--o{ ConsultHistory : "diminati"
+    Car ||--o{ TestDrive : "diuji"
+    Car ||--o{ LetterOfIntentDetail : "dirinci"
+    Car ||--o{ SalesAgreementDetail : "terjual"
+    Car ||--o{ InventoryTransfer : "dipindah"
+
+    ConsultHistory ||--o{ TestDrive : "berlanjut ke"
+    ConsultHistory ||--o{ LetterOfIntent : "berlanjut ke"
+
+    TestDrive ||--o{ LetterOfIntent : "bisa berlanjut ke"
+
+    LetterOfIntent ||--o{ LetterOfIntentDetail : "memiliki rincian"
+    LetterOfIntent ||--o{ Booking : "terkait"
+    LetterOfIntent ||--o{ CreditApplication : "membutuhkan"
+    LetterOfIntent ||--o{ SalesAgreement : "diformalkan"
+
+    LeasingCompany ||--o{ CreditApplication : "memproses"
+
+    CreditApplication ||--o{ CreditDocument : "membutuhkan"
+    CreditApplication ||--o{ PaymentHistory : "terkait"
+
+    SalesAgreement ||--o{ SalesAgreementDetail : "memiliki rincian"
+    SalesAgreement ||--o{ PaymentHistory : "memiliki"
+    SalesAgreement ||--o{ VehicleRegistration : "membutuhkan"
+    SalesAgreement ||--o{ CarDelivery : "menghasilkan"
+    SalesAgreement ||--o{ ServiceHistory : "memiliki"
+    SalesAgreement ||--o{ CustomerComplaint : "terkait"
+    SalesAgreement ||--o{ WarrantyClaim : "terkait"
+    SalesAgreement ||--o{ CustomerFeedback : "subjek dari"
+
+    LetterOfIntentDetail ||--|| SalesAgreementDetail : "dirinci dalam"
+
+    CarDelivery ||--o{ CarDeliverySchedule : "dijadwalkan"
+    CarDelivery ||--o{ PreDeliveryInspection : "menjalani"
 ```
 
 ## 5. Catatan Tambahan

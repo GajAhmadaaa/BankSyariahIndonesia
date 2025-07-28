@@ -8,8 +8,8 @@ GO
 
 -- 1. Dealer
 CREATE TABLE Dealer (
-    DealerId INT IDENTITY(1,1) PRIMARY KEY,
-    DealerName VARCHAR(100) NOT NULL,
+    DealerID INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
     City VARCHAR(50) NOT NULL,
     Address VARCHAR(200),
     PhoneNumber VARCHAR(20) CHECK (PhoneNumber LIKE '[0-9]%')
@@ -17,409 +17,285 @@ CREATE TABLE Dealer (
 
 -- 2. Customer
 CREATE TABLE Customer (
-    CustomerId INT IDENTITY(1,1) PRIMARY KEY,
-    CustomerName VARCHAR(100) NOT NULL,
+    CustomerID INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
     PhoneNumber VARCHAR(20),
     Email VARCHAR(100),
     Address VARCHAR(200)
 );
 
--- 3. SalesOfficer
-CREATE TABLE SalesOfficer (
-    SalesOfficerId INT IDENTITY(1,1) PRIMARY KEY,
-    DealerId INT NOT NULL,
-    SalesName VARCHAR(100) NOT NULL,
-    FOREIGN KEY (DealerId) REFERENCES Dealer(DealerId)
+-- 3. SalesPerson
+CREATE TABLE SalesPerson (
+    SalesPersonID INT IDENTITY(1,1) PRIMARY KEY,
+    DealerID INT NOT NULL,
+    Name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (DealerID) REFERENCES Dealer(DealerID)
 );
 
 -- 4. Car
 CREATE TABLE Car (
-    CarId INT IDENTITY(1,1) PRIMARY KEY,
-    CarName VARCHAR(100) NOT NULL,
+    CarID INT IDENTITY(1,1) PRIMARY KEY,
+    Model VARCHAR(100) NOT NULL,
     CarType VARCHAR(50) NOT NULL,
     BasePrice MONEY NOT NULL,
     Year INT,
     Color VARCHAR(30)
 );
 
--- 5. Consultation
-CREATE TABLE Consultation (
-    ConsultationId INT IDENTITY(1,1) PRIMARY KEY,
-    DealerId INT NOT NULL,
-    CustomerId INT NOT NULL,
-    SalesOfficerId INT NOT NULL,
-    CarId INT,
+-- 5. ConsultHistory
+CREATE TABLE ConsultHistory (
+    ConsultHistoryID INT IDENTITY(1,1) PRIMARY KEY,
+    DealerID INT NOT NULL,
+    CustomerID INT NOT NULL,
+    SalesPersonID INT NOT NULL,
+    CarID INT,
     Budget MONEY,
     PaymentMethod VARCHAR(20),
-    ConsultationDate DATE NOT NULL,
+    ConsultationDate DATETIME NOT NULL,
     Note VARCHAR(200),
-    FOREIGN KEY (DealerId) REFERENCES Dealer(DealerId),
-    FOREIGN KEY (CustomerId) REFERENCES Customer(CustomerId),
-    FOREIGN KEY (SalesOfficerId) REFERENCES SalesOfficer(SalesOfficerId),
-    FOREIGN KEY (CarId) REFERENCES Car(CarId)
+    FOREIGN KEY (DealerID) REFERENCES Dealer(DealerID),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (SalesPersonID) REFERENCES SalesPerson(SalesPersonID),
+    FOREIGN KEY (CarID) REFERENCES Car(CarID)
 );
 
 -- 6. TestDrive
 CREATE TABLE TestDrive (
-    TestDriveId INT IDENTITY(1,1) PRIMARY KEY,
-    DealerId INT NOT NULL,
-    CustomerId INT NOT NULL,
-    SalesOfficerId INT NOT NULL,
-    CarId INT NOT NULL,
-    ConsultationId INT,
-    TestDriveDate DATE NOT NULL,
+    TestDriveID INT IDENTITY(1,1) PRIMARY KEY,
+    DealerID INT NOT NULL,
+    CustomerID INT NOT NULL,
+    SalesPersonID INT NOT NULL,
+    CarID INT NOT NULL,
+    ConsultHistoryID INT,
+    TestDriveDate DATETIME NOT NULL,
     Note VARCHAR(200),
-    FOREIGN KEY (DealerId) REFERENCES Dealer(DealerId),
-    FOREIGN KEY (CustomerId) REFERENCES Customer(CustomerId),
-    FOREIGN KEY (SalesOfficerId) REFERENCES SalesOfficer(SalesOfficerId),
-    FOREIGN KEY (CarId) REFERENCES Car(CarId),
-    FOREIGN KEY (ConsultationId) REFERENCES Consultation(ConsultationId)
+    FOREIGN KEY (DealerID) REFERENCES Dealer(DealerID),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (SalesPersonID) REFERENCES SalesPerson(SalesPersonID),
+    FOREIGN KEY (CarID) REFERENCES Car(CarID),
+    FOREIGN KEY (ConsultHistoryID) REFERENCES ConsultHistory(ConsultHistoryID)
 );
 
--- 7. Negotiation
-CREATE TABLE Negotiation (
-    NegotiationId INT IDENTITY(1,1) PRIMARY KEY,
-    ConsultationId INT,
-    TestDriveId INT,
-    NegotiationDate DATE NOT NULL,
-    Discount MONEY,
-    Package VARCHAR(100),
-    Note VARCHAR(200),
-    FOREIGN KEY (ConsultationId) REFERENCES Consultation(ConsultationId),
-    FOREIGN KEY (TestDriveId) REFERENCES TestDrive(TestDriveId)
-);
-
--- 8. LetterOfIntent (LOI) - Header
+-- 7. LetterOfIntent (LOI) - Header
 CREATE TABLE LetterOfIntent (
-    LOIId INT IDENTITY(1,1) PRIMARY KEY,
-    DealerId INT NOT NULL,
-    CustomerId INT NOT NULL,
-    SalesOfficerId INT NOT NULL,
-    ConsultationId INT,
-    TestDriveId INT,
+    LOIID INT IDENTITY(1,1) PRIMARY KEY,
+    DealerID INT NOT NULL,
+    CustomerID INT NOT NULL,
+    SalesPersonID INT NOT NULL,
+    ConsultHistoryID INT,
+    TestDriveID INT,
     LOIDate DATE NOT NULL,
     PaymentMethod VARCHAR(20),
     Note VARCHAR(200),
-    FOREIGN KEY (DealerId) REFERENCES Dealer(DealerId),
-    FOREIGN KEY (CustomerId) REFERENCES Customer(CustomerId),
-    FOREIGN KEY (SalesOfficerId) REFERENCES SalesOfficer(SalesOfficerId),
-    FOREIGN KEY (ConsultationId) REFERENCES Consultation(ConsultationId),
-    FOREIGN KEY (TestDriveId) REFERENCES TestDrive(TestDriveId)
+    FOREIGN KEY (DealerID) REFERENCES Dealer(DealerID),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (SalesPersonID) REFERENCES SalesPerson(SalesPersonID),
+    FOREIGN KEY (ConsultHistoryID) REFERENCES ConsultHistory(ConsultHistoryID),
+    FOREIGN KEY (TestDriveID) REFERENCES TestDrive(TestDriveID)
 );
 
--- 9. LOIDetail
-CREATE TABLE LOIDetail (
-    LOIDetailId INT IDENTITY(1,1) PRIMARY KEY,
-    LOIId INT NOT NULL,
-    CarId INT NOT NULL,
-    FixPrice MONEY NOT NULL,
+-- 8. LetterOfIntentDetail
+CREATE TABLE LetterOfIntentDetail (
+    LOIDetailID INT IDENTITY(1,1) PRIMARY KEY,
+    LOIID INT NOT NULL,
+    CarID INT NOT NULL,
+    AgreedPrice MONEY NOT NULL,
     Discount MONEY,
     DownPayment MONEY,
     Note VARCHAR(200),
-    FOREIGN KEY (LOIId) REFERENCES LetterOfIntent(LOIId),
-    FOREIGN KEY (CarId) REFERENCES Car(CarId)
+    FOREIGN KEY (LOIID) REFERENCES LetterOfIntent(LOIID),
+    FOREIGN KEY (CarID) REFERENCES Car(CarID)
 );
 
--- 10. Booking
+-- 9. Booking
 CREATE TABLE Booking (
-    BookingId INT IDENTITY(1,1) PRIMARY KEY,
-    LOIId INT NOT NULL,
+    BookingID INT IDENTITY(1,1) PRIMARY KEY,
+    LOIID INT NOT NULL,
     BookingFee MONEY NOT NULL,
     BookingDate DATE NOT NULL,
     Status VARCHAR(20),
-    FOREIGN KEY (LOIId) REFERENCES LetterOfIntent(LOIId)
+    FOREIGN KEY (LOIID) REFERENCES LetterOfIntent(LOIID)
 );
 
--- 11. Leasing
-CREATE TABLE Leasing (
-    LeasingId INT IDENTITY(1,1) PRIMARY KEY,
-    LeasingName VARCHAR(100) NOT NULL,
+-- 10. LeasingCompany
+CREATE TABLE LeasingCompany (
+    LeasingCompanyID INT IDENTITY(1,1) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
     Address VARCHAR(200),
     PhoneNumber VARCHAR(20)
 );
 
--- 12. CreditApplication
+-- 11. CreditApplication
 CREATE TABLE CreditApplication (
-    CreditAppId INT IDENTITY(1,1) PRIMARY KEY,
-    LOIId INT NOT NULL,
-    LeasingId INT,
+    CreditAppID INT IDENTITY(1,1) PRIMARY KEY,
+    LOIID INT NOT NULL,
+    LeasingCompanyID INT,
     ApplicationDate DATE NOT NULL,
     Status VARCHAR(20),
-    FOREIGN KEY (LOIId) REFERENCES LetterOfIntent(LOIId),
-    FOREIGN KEY (LeasingId) REFERENCES Leasing(LeasingId)
+    FOREIGN KEY (LOIID) REFERENCES LetterOfIntent(LOIID),
+    FOREIGN KEY (LeasingCompanyID) REFERENCES LeasingCompany(LeasingCompanyID)
 );
 
--- 13. Document
-CREATE TABLE Document (
-    DocumentId INT IDENTITY(1,1) PRIMARY KEY,
-    CreditAppId INT NOT NULL,
+-- 12. CreditDocument
+CREATE TABLE CreditDocument (
+    CreditDocumentID INT IDENTITY(1,1) PRIMARY KEY,
+    CreditAppID INT NOT NULL,
     DocumentType VARCHAR(50) NOT NULL,
     DocumentPath VARCHAR(200),
     UploadDate DATE,
-    FOREIGN KEY (CreditAppId) REFERENCES CreditApplication(CreditAppId)
+    FOREIGN KEY (CreditAppID) REFERENCES CreditApplication(CreditAppID)
 );
 
--- 14. Transaction - Header
-CREATE TABLE [Transaction] (
-    TransactionId INT IDENTITY(1,1) PRIMARY KEY,
-    DealerId INT NOT NULL,
-    CustomerId INT NOT NULL,
-    SalesOfficerId INT NOT NULL,
-    LOIId INT,
+-- 13. SalesAgreement - Header
+CREATE TABLE SalesAgreement (
+    SalesAgreementID INT IDENTITY(1,1) PRIMARY KEY,
+    DealerID INT NOT NULL,
+    CustomerID INT NOT NULL,
+    SalesPersonID INT NOT NULL,
+    LOIID INT,
     TransactionDate DATE NOT NULL,
     TotalAmount MONEY,
     Status VARCHAR(20),
-    FOREIGN KEY (DealerId) REFERENCES Dealer(DealerId),
-    FOREIGN KEY (CustomerId) REFERENCES Customer(CustomerId),
-    FOREIGN KEY (SalesOfficerId) REFERENCES SalesOfficer(SalesOfficerId),
-    FOREIGN KEY (LOIId) REFERENCES LetterOfIntent(LOIId)
+    FOREIGN KEY (DealerID) REFERENCES Dealer(DealerID),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (SalesPersonID) REFERENCES SalesPerson(SalesPersonID),
+    FOREIGN KEY (LOIID) REFERENCES LetterOfIntent(LOIID)
 );
 
--- 15. TransactionDetail
-CREATE TABLE TransactionDetail (
-    TransactionDetailId INT IDENTITY(1,1) PRIMARY KEY,
-    TransactionId INT NOT NULL,
-    LOIDetailId INT,
-    CarId INT NOT NULL,
+-- 14. SalesAgreementDetail
+CREATE TABLE SalesAgreementDetail (
+    SalesAgreementDetailID INT IDENTITY(1,1) PRIMARY KEY,
+    SalesAgreementID INT NOT NULL,
+    LOIDetailID INT,
+    CarID INT NOT NULL,
     Price MONEY NOT NULL,
     Discount MONEY,
     Note VARCHAR(200),
-    FOREIGN KEY (TransactionId) REFERENCES [Transaction](TransactionId),
-    FOREIGN KEY (LOIDetailId) REFERENCES LOIDetail(LOIDetailId),
-    FOREIGN KEY (CarId) REFERENCES Car(CarId)
+    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID),
+    FOREIGN KEY (LOIDetailID) REFERENCES LetterOfIntentDetail(LOIDetailID),
+    FOREIGN KEY (CarID) REFERENCES Car(CarID)
 );
 
--- 16. Payment
-CREATE TABLE Payment (
-    PaymentId INT IDENTITY(1,1) PRIMARY KEY,
-    TransactionId INT,
-    CreditAppId INT,
+-- 15. PaymentHistory
+CREATE TABLE PaymentHistory (
+    PaymentHistoryID INT IDENTITY(1,1) PRIMARY KEY,
+    SalesAgreementID INT,
+    CreditAppID INT,
     PaymentAmount MONEY NOT NULL,
     PaymentDate DATE NOT NULL,
     PaymentType VARCHAR(20),
-    FOREIGN KEY (TransactionId) REFERENCES [Transaction](TransactionId),
-    FOREIGN KEY (CreditAppId) REFERENCES CreditApplication(CreditAppId)
+    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID),
+    FOREIGN KEY (CreditAppID) REFERENCES CreditApplication(CreditAppID)
 );
 
--- 17. Administration
-CREATE TABLE Administration (
-    AdministrationId INT IDENTITY(1,1) PRIMARY KEY,
-    TransactionId INT NOT NULL,
-    STNKNumber VARCHAR(50),
-    BPKBNumber VARCHAR(50),
+-- 16. VehicleRegistration
+CREATE TABLE VehicleRegistration (
+    VehicleRegistrationID INT IDENTITY(1,1) PRIMARY KEY,
+    SalesAgreementID INT NOT NULL,
+    RegistrationNumber VARCHAR(50),
+    OwnershipBookNumber VARCHAR(50),
     TaxStatus VARCHAR(50),
     InsuranceStatus VARCHAR(50),
-    FOREIGN KEY (TransactionId) REFERENCES [Transaction](TransactionId)
+    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
 );
 
--- 18. Delivery
-CREATE TABLE Delivery (
-    DeliveryId INT IDENTITY(1,1) PRIMARY KEY,
-    TransactionId INT NOT NULL,
-    DeliveryDate DATE NOT NULL,
+-- 17. CarDelivery
+CREATE TABLE CarDelivery (
+    CarDeliveryID INT IDENTITY(1,1) PRIMARY KEY,
+    SalesAgreementID INT NOT NULL,
+    DeliveryDate DATETIME NOT NULL,
     Status VARCHAR(20),
-    FOREIGN KEY (TransactionId) REFERENCES [Transaction](TransactionId)
+    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
 );
 
--- 19. DeliverySchedule
-CREATE TABLE DeliverySchedule (
-    DeliveryScheduleId INT IDENTITY(1,1) PRIMARY KEY,
-    DeliveryId INT NOT NULL,
+-- 18. CarDeliverySchedule
+CREATE TABLE CarDeliverySchedule (
+    CarDeliveryScheduleID INT IDENTITY(1,1) PRIMARY KEY,
+    CarDeliveryID INT NOT NULL,
     ScheduledDate DATE NOT NULL,
     Note VARCHAR(200),
-    FOREIGN KEY (DeliveryId) REFERENCES Delivery(DeliveryId)
+    FOREIGN KEY (CarDeliveryID) REFERENCES CarDelivery(CarDeliveryID)
 );
 
--- 20. Inspection
-CREATE TABLE Inspection (
-    InspectionId INT IDENTITY(1,1) PRIMARY KEY,
-    DeliveryId INT NOT NULL,
+-- 19. PreDeliveryInspection
+CREATE TABLE PreDeliveryInspection (
+    PreDeliveryInspectionID INT IDENTITY(1,1) PRIMARY KEY,
+    CarDeliveryID INT NOT NULL,
     InspectionDate DATE NOT NULL,
     InspectorName VARCHAR(100),
     Note VARCHAR(200),
-    FOREIGN KEY (DeliveryId) REFERENCES Delivery(DeliveryId)
+    FOREIGN KEY (CarDeliveryID) REFERENCES CarDelivery(CarDeliveryID)
 );
 
--- 21. AfterSalesService
-CREATE TABLE AfterSalesService (
-    ServiceId INT IDENTITY(1,1) PRIMARY KEY,
-    TransactionId INT NOT NULL,
+-- 20. ServiceHistory
+CREATE TABLE ServiceHistory (
+    ServiceID INT IDENTITY(1,1) PRIMARY KEY,
+    SalesAgreementID INT NOT NULL,
     ServiceDate DATE NOT NULL,
     ServiceType VARCHAR(50),
     Note VARCHAR(200),
-    FOREIGN KEY (TransactionId) REFERENCES [Transaction](TransactionId)
+    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
 );
 
--- 22. Complaint
-CREATE TABLE Complaint (
-    ComplaintId INT IDENTITY(1,1) PRIMARY KEY,
-    CustomerId INT NOT NULL,
-    TransactionId INT,
-    ComplaintDate DATE NOT NULL,
+-- 21. CustomerComplaint
+CREATE TABLE CustomerComplaint (
+    CustomerComplaintID INT IDENTITY(1,1) PRIMARY KEY,
+    CustomerID INT NOT NULL,
+    SalesAgreementID INT,
+    ComplaintDate DATETIME NOT NULL,
     Description VARCHAR(200),
     Status VARCHAR(20),
-    FOREIGN KEY (CustomerId) REFERENCES Customer(CustomerId),
-    FOREIGN KEY (TransactionId) REFERENCES [Transaction](TransactionId)
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
 );
 
--- 23. WarrantyClaim
+-- 22. WarrantyClaim
 CREATE TABLE WarrantyClaim (
-    WarrantyClaimId INT IDENTITY(1,1) PRIMARY KEY,
-    CustomerId INT NOT NULL,
-    TransactionId INT,
-    ClaimDate DATE NOT NULL,
+    WarrantyClaimID INT IDENTITY(1,1) PRIMARY KEY,
+    CustomerID INT NOT NULL,
+    SalesAgreementID INT,
+    ClaimDate DATETIME NOT NULL,
     Description VARCHAR(200),
     Status VARCHAR(20),
-    FOREIGN KEY (CustomerId) REFERENCES Customer(CustomerId),
-    FOREIGN KEY (TransactionId) REFERENCES [Transaction](TransactionId)
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
 );
 
--- 24. Inventory
-CREATE TABLE Inventory (
-    InventoryId INT IDENTITY(1,1) PRIMARY KEY,
-    DealerId INT NOT NULL,
-    CarId INT NOT NULL,
+-- 23. DealerInventory
+CREATE TABLE DealerInventory (
+    DealerInventoryID INT IDENTITY(1,1) PRIMARY KEY,
+    DealerID INT NOT NULL,
+    CarID INT NOT NULL,
     Stock INT NOT NULL,
-    FOREIGN KEY (DealerId) REFERENCES Dealer(DealerId),
-    FOREIGN KEY (CarId) REFERENCES Car(CarId)
+    Price MONEY NOT NULL,
+    DiscountPercent FLOAT NOT NULL DEFAULT 0,
+    FeePercent FLOAT NOT NULL DEFAULT 0,
+    FOREIGN KEY (DealerID) REFERENCES Dealer(DealerID),
+    FOREIGN KEY (CarID) REFERENCES Car(CarID)
 );
 
--- 25. StockMutation
-CREATE TABLE StockMutation (
-    MutationId INT IDENTITY(1,1) PRIMARY KEY,
-    FromDealerId INT NOT NULL,
-    ToDealerId INT NOT NULL,
-    CarId INT NOT NULL,
+-- 24. InventoryTransfer
+CREATE TABLE InventoryTransfer (
+    InventoryTransferID INT IDENTITY(1,1) PRIMARY KEY,
+    FromDealerID INT NOT NULL,
+    ToDealerID INT NOT NULL,
+    CarID INT NOT NULL,
     Quantity INT NOT NULL,
     MutationDate DATE NOT NULL,
-    FOREIGN KEY (FromDealerId) REFERENCES Dealer(DealerId),
-    FOREIGN KEY (ToDealerId) REFERENCES Dealer(DealerId),
-    FOREIGN KEY (CarId) REFERENCES Car(CarId)
+    FOREIGN KEY (FromDealerID) REFERENCES Dealer(DealerID),
+    FOREIGN KEY (ToDealerID) REFERENCES Dealer(DealerID),
+    FOREIGN KEY (CarID) REFERENCES Car(CarID)
 );
 
--- 26. FeedbackSurvey
-CREATE TABLE FeedbackSurvey (
-    FeedbackId INT IDENTITY(1,1) PRIMARY KEY,
-    CustomerId INT NOT NULL,
-    TransactionId INT,
+-- 25. CustomerFeedback
+CREATE TABLE CustomerFeedback (
+    CustomerFeedbackID INT IDENTITY(1,1) PRIMARY KEY,
+    CustomerID INT NOT NULL,
+    SalesAgreementID INT,
     FeedbackDate DATE NOT NULL,
     Rating INT,
     Comment VARCHAR(200),
-    FOREIGN KEY (CustomerId) REFERENCES Customer(CustomerId),
-    FOREIGN KEY (TransactionId) REFERENCES [Transaction](TransactionId)
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
 );
-GO
-
--- Stored Procedures
-CREATE PROCEDURE sp_RegisterCustomer
-    @CustomerName VARCHAR(100),
-    @PhoneNumber VARCHAR(20),
-    @Email VARCHAR(100),
-    @Address VARCHAR(200)
-AS
-BEGIN
-    INSERT INTO Customer (CustomerName, PhoneNumber, Email, Address)
-    VALUES (@CustomerName, @PhoneNumber, @Email, @Address);
-
-    SELECT SCOPE_IDENTITY() AS CustomerId;
-END
-GO
-
-CREATE PROCEDURE sp_ApplyForCredit
-    @LOIId INT,
-    @LeasingId INT
-AS
-BEGIN
-    INSERT INTO CreditApplication (LOIId, LeasingId, ApplicationDate, Status)
-    VALUES (@LOIId, @LeasingId, GETDATE(), 'Pending');
-
-    SELECT SCOPE_IDENTITY() AS CreditAppId;
-END
-GO
-
-CREATE PROCEDURE sp_CarDelivery
-    @TransactionId INT
-AS
-BEGIN
-    INSERT INTO Delivery (TransactionId, DeliveryDate, Status)
-    VALUES (@TransactionId, GETDATE(), 'Delivered');
-
-    UPDATE [Transaction] SET Status = 'Completed' WHERE TransactionId = @TransactionId;
-END
-GO
-
--- Functions
-CREATE FUNCTION fn_CalculateTotalPrice
-(
-    @Price MONEY,
-    @Discount MONEY
-)
-RETURNS MONEY
-AS
-BEGIN
-    RETURN @Price - @Discount;
-END
-GO
-
--- Views
-CREATE VIEW vw_Sales_Report AS
-SELECT
-    t.TransactionId,
-    t.TransactionDate,
-    c.CustomerName,
-    so.SalesName,
-    cr.CarName,
-    td.Price,
-    td.Discount,
-    dbo.fn_CalculateTotalPrice(td.Price, td.Discount) AS TotalPrice
-FROM
-    [Transaction] t
-    JOIN TransactionDetail td ON t.TransactionId = td.TransactionId
-    JOIN Customer c ON t.CustomerId = c.CustomerId
-    JOIN SalesOfficer so ON t.SalesOfficerId = so.SalesOfficerId
-    JOIN Car cr ON td.CarId = cr.CarId
-GO
-
-CREATE VIEW vw_Credit_Status AS
-SELECT
-    ca.CreditAppId,
-    c.CustomerName,
-    l.LeasingName,
-    ca.ApplicationDate,
-    ca.Status
-FROM
-    CreditApplication ca
-    JOIN LetterOfIntent loi ON ca.LOIId = loi.LOIId
-    JOIN Customer c ON loi.CustomerId = c.CustomerId
-    JOIN Leasing l ON ca.LeasingId = l.LeasingId;
-GO
-
-CREATE VIEW vw_Available_Cars AS
-SELECT
-    d.DealerName,
-    c.CarName,
-    c.CarType,
-    c.BasePrice,
-    i.Stock
-FROM
-    Inventory i
-    JOIN Car c ON i.CarId = c.CarId
-    JOIN Dealer d ON i.DealerId = d.DealerId
-WHERE
-    i.Stock > 0;
-GO
-
--- Triggers
-CREATE TRIGGER trg_UpdateStockAfterSale
-ON TransactionDetail
-AFTER INSERT
-AS
-BEGIN
-    UPDATE Inventory
-    SET Stock = Stock - 1
-    FROM Inventory i
-    JOIN inserted ins ON i.CarId = ins.CarId
-    JOIN [Transaction] t ON ins.TransactionId = t.TransactionId
-    WHERE i.DealerId = t.DealerId;
-END
 GO
