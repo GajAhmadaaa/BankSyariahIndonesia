@@ -20,7 +20,7 @@ CREATE TABLE Customer (
     CustomerID INT IDENTITY(1,1) PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
     PhoneNumber VARCHAR(20),
-    Email VARCHAR(100),
+    Email VARCHAR(100) UNIQUE,
     Address VARCHAR(200)
 );
 
@@ -84,7 +84,7 @@ CREATE TABLE LetterOfIntent (
     SalesPersonID INT NOT NULL,
     ConsultHistoryID INT,
     TestDriveID INT,
-    LOIDate DATE NOT NULL,
+    LOIDate DATETIME NOT NULL,
     PaymentMethod VARCHAR(20),
     Note VARCHAR(200),
     FOREIGN KEY (DealerID) REFERENCES Dealer(DealerID),
@@ -112,7 +112,7 @@ CREATE TABLE Booking (
     BookingID INT IDENTITY(1,1) PRIMARY KEY,
     LOIID INT NOT NULL,
     BookingFee MONEY NOT NULL,
-    BookingDate DATE NOT NULL,
+    BookingDate DATETIME NOT NULL,
     Status VARCHAR(20),
     FOREIGN KEY (LOIID) REFERENCES LetterOfIntent(LOIID)
 );
@@ -130,7 +130,7 @@ CREATE TABLE CreditApplication (
     CreditAppID INT IDENTITY(1,1) PRIMARY KEY,
     LOIID INT NOT NULL,
     LeasingCompanyID INT,
-    ApplicationDate DATE NOT NULL,
+    ApplicationDate DATETIME NOT NULL,
     Status VARCHAR(20),
     FOREIGN KEY (LOIID) REFERENCES LetterOfIntent(LOIID),
     FOREIGN KEY (LeasingCompanyID) REFERENCES LeasingCompany(LeasingCompanyID)
@@ -142,7 +142,7 @@ CREATE TABLE CreditDocument (
     CreditAppID INT NOT NULL,
     DocumentType VARCHAR(50) NOT NULL,
     DocumentPath VARCHAR(200),
-    UploadDate DATE,
+    UploadDate DATETIME,
     FOREIGN KEY (CreditAppID) REFERENCES CreditApplication(CreditAppID)
 );
 
@@ -153,7 +153,7 @@ CREATE TABLE SalesAgreement (
     CustomerID INT NOT NULL,
     SalesPersonID INT NOT NULL,
     LOIID INT,
-    TransactionDate DATE NOT NULL,
+    TransactionDate DATETIME NOT NULL,
     TotalAmount MONEY,
     Status VARCHAR(20),
     FOREIGN KEY (DealerID) REFERENCES Dealer(DealerID),
@@ -182,7 +182,7 @@ CREATE TABLE PaymentHistory (
     SalesAgreementID INT,
     CreditAppID INT,
     PaymentAmount MONEY NOT NULL,
-    PaymentDate DATE NOT NULL,
+    PaymentDate DATETIME NOT NULL,
     PaymentType VARCHAR(20),
     FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID),
     FOREIGN KEY (CreditAppID) REFERENCES CreditApplication(CreditAppID)
@@ -192,10 +192,10 @@ CREATE TABLE PaymentHistory (
 CREATE TABLE VehicleRegistration (
     VehicleRegistrationID INT IDENTITY(1,1) PRIMARY KEY,
     SalesAgreementID INT NOT NULL,
-    RegistrationNumber VARCHAR(50),
-    OwnershipBookNumber VARCHAR(50),
-    TaxStatus VARCHAR(50),
-    InsuranceStatus VARCHAR(50),
+    RegistrationNumber VARCHAR(20),
+    OwnershipBookNumber VARCHAR(20),
+    TaxStatus VARCHAR(20),
+    InsuranceStatus VARCHAR(20),
     FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
 );
 
@@ -212,7 +212,7 @@ CREATE TABLE CarDelivery (
 CREATE TABLE CarDeliverySchedule (
     CarDeliveryScheduleID INT IDENTITY(1,1) PRIMARY KEY,
     CarDeliveryID INT NOT NULL,
-    ScheduledDate DATE NOT NULL,
+    ScheduledDate DATETIME NOT NULL,
     Note VARCHAR(200),
     FOREIGN KEY (CarDeliveryID) REFERENCES CarDelivery(CarDeliveryID)
 );
@@ -221,7 +221,7 @@ CREATE TABLE CarDeliverySchedule (
 CREATE TABLE PreDeliveryInspection (
     PreDeliveryInspectionID INT IDENTITY(1,1) PRIMARY KEY,
     CarDeliveryID INT NOT NULL,
-    InspectionDate DATE NOT NULL,
+    InspectionDate DATETIME NOT NULL,
     InspectorName VARCHAR(100),
     Note VARCHAR(200),
     FOREIGN KEY (CarDeliveryID) REFERENCES CarDelivery(CarDeliveryID)
@@ -231,7 +231,7 @@ CREATE TABLE PreDeliveryInspection (
 CREATE TABLE ServiceHistory (
     ServiceID INT IDENTITY(1,1) PRIMARY KEY,
     SalesAgreementID INT NOT NULL,
-    ServiceDate DATE NOT NULL,
+    ServiceDate DATETIME NOT NULL,
     ServiceType VARCHAR(50),
     Note VARCHAR(200),
     FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
@@ -281,7 +281,7 @@ CREATE TABLE InventoryTransfer (
     ToDealerID INT NOT NULL,
     CarID INT NOT NULL,
     Quantity INT NOT NULL,
-    MutationDate DATE NOT NULL,
+    MutationDate DATETIME NOT NULL,
     FOREIGN KEY (FromDealerID) REFERENCES Dealer(DealerID),
     FOREIGN KEY (ToDealerID) REFERENCES Dealer(DealerID),
     FOREIGN KEY (CarID) REFERENCES Car(CarID)
@@ -292,7 +292,7 @@ CREATE TABLE CustomerFeedback (
     CustomerFeedbackID INT IDENTITY(1,1) PRIMARY KEY,
     CustomerID INT NOT NULL,
     SalesAgreementID INT,
-    FeedbackDate DATE NOT NULL,
+    FeedbackDate DATETIME NOT NULL,
     Rating INT,
     Comment VARCHAR(200),
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),

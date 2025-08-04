@@ -7,7 +7,7 @@ BEGIN
     SET NOCOUNT ON;
 
     UPDATE sa
-    SET Status = 'Paid'
+    SET Status = 'Completed'
     FROM SalesAgreement sa
     WHERE sa.SalesAgreementID IN (
         SELECT p.SalesAgreementID

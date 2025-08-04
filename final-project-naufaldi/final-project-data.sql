@@ -69,7 +69,7 @@ INSERT INTO CreditDocument (CreditAppID, DocumentType, DocumentPath, UploadDate)
 
 -- SalesAgreement
 INSERT INTO SalesAgreement (DealerID, CustomerID, SalesPersonID, LOIID, TransactionDate, TotalAmount, Status) VALUES
-(1, 1, 1, 1, '2025-07-10', 590000000, 'Lunas');
+(1, 1, 1, 1, '2025-07-10', 590000000, 'Completed');
 
 -- PaymentHistory
 INSERT INTO PaymentHistory (SalesAgreementID, PaymentAmount, PaymentDate, PaymentType) VALUES

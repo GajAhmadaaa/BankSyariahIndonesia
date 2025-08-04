@@ -1,9 +1,9 @@
 CREATE PROCEDURE sp_CreateVehicleRegistration
     @SalesAgreementID INT,
-    @RegistrationNumber VARCHAR(50),
-    @OwnershipBookNumber VARCHAR(50),
-    @TaxStatus VARCHAR(50),
-    @InsuranceStatus VARCHAR(50)
+    @RegistrationNumber VARCHAR(20),
+    @OwnershipBookNumber VARCHAR(20),
+    @TaxStatus VARCHAR(20),
+    @InsuranceStatus VARCHAR(20)
 AS
 BEGIN
     -- Validasi: pastikan transaksi ada

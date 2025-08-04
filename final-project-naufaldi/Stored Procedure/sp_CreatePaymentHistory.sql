@@ -2,7 +2,7 @@ CREATE PROCEDURE sp_CreatePaymentHistory
     @SalesAgreementID INT = NULL,
     @CreditAppID INT = NULL,
     @PaymentAmount MONEY,
-    @PaymentDate DATE,
+    @PaymentDate DATETIME,
     @PaymentType VARCHAR(20)
 AS
 BEGIN

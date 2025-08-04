@@ -171,7 +171,7 @@ erDiagram
 | LOIID             | INT, FK        | ID LOI terkait (opsional)                |
 | TransactionDate   | DATE           | Tanggal transaksi (Wajib diisi)          |
 | TotalAmount       | MONEY          | Total nilai transaksi                    |
-| Status            | VARCHAR(20)    | Status transaksi (e.g., Paid, Unpaid)    |
+| Status            | VARCHAR(20)    | Status transaksi (e.g., Completed, Unpaid)    |
 
 ### 4. Tabel: SalesAgreementDetail
 | Nama Kolom             | Tipe Data      | Keterangan                               |
@@ -212,7 +212,7 @@ erDiagram
 | CustomerID    | INT, PK        | ID unik untuk setiap pelanggan           |
 | Name          | VARCHAR(100)   | Nama lengkap pelanggan (Wajib diisi)     |
 | PhoneNumber   | VARCHAR(20)    | Nomor telepon pelanggan                  |
-| Email         | VARCHAR(100)   | Alamat email pelanggan                   |
+| Email         | VARCHAR(100)   | Alamat email pelanggan   (UNIQUE)        |
 | Address       | VARCHAR(200)   | Alamat lengkap pelanggan                 |
 
 ### 8. Tabel: SalesPerson
@@ -380,7 +380,7 @@ erDiagram
 | CustomerFeedbackID | INT, PK        | ID unik untuk setiap feedback            |
 | CustomerID         | INT, FK        | ID pelanggan yang memberikan feedback (Wajib diisi) |
 | SalesAgreementID   | INT, FK        | ID transaksi terkait (opsional)          |
-| FeedbackDate       | DATE           | Tanggal feedback (Wajib diisi)           |
+| FeedbackDate       | DATETIME       | Tanggal feedback (Wajib diisi)           |
 | Rating             | INT            | Peringkat kepuasan (1-5)                 |
 | Comment            | VARCHAR(200)   | Komentar dari pelanggan                  |
 
@@ -424,22 +424,26 @@ Stored procedure ini akan digunakan untuk mengajukan kredit baru.
 **Parameter:**
 - `@LOIID INT`
 - `@LeasingCompanyID INT`
+- `@ApplicationDate DATETIME`
 
 **Proses:**
 1.  Menambahkan data pengajuan kredit baru ke tabel `CreditApplication`.
 2.  Mengembalikan `CreditAppID` dari pengajuan yang baru saja ditambahkan.
 
 ```sql
-CREATE PROCEDURE sp_ApplyForCredit
-    @LOIID INT,
-    @LeasingCompanyID INT
-AS
-BEGIN
-    INSERT INTO CreditApplication (LOIID, LeasingCompanyID, ApplicationDate, Status)
-    VALUES (@LOIID, @LeasingCompanyID, GETDATE(), 'Pending');
+### 2. Pengajuan Kredit
+Stored procedure ini akan digunakan untuk mengajukan kredit baru.
 
-    SELECT SCOPE_IDENTITY() AS CreditAppID;
-END
+**Nama:** `sp_ApplyForCredit`
+
+**Parameter:**
+- `@LOIID INT`
+- `@LeasingCompanyID INT`
+- `@ApplicationDate DATETIME`
+
+**Proses:**
+1.  Menambahkan data pengajuan kredit baru ke tabel `CreditApplication`.
+2.  Mengembalikan `CreditAppID` dari pengajuan yang baru saja ditambahkan.
 ```
 
 ### 3. Serah Terima Mobil
@@ -451,8 +455,8 @@ Stored procedure ini akan digunakan untuk mencatat serah terima mobil.
 - `@SalesAgreementID INT`
 
 **Proses:**
-1.  Menambahkan data serah terima baru ke tabel `CarDelivery`.
-2.  Mengupdate status transaksi menjadi 'Completed'.
+1.  Menambahkan data serah terima baru ke tabel `CarDelivery` dengan status 'Delivered'.
+2.  Mengupdate status transaksi di `SalesAgreement` menjadi 'Completed'.
 
 ```sql
 CREATE PROCEDURE sp_CreateCarDelivery
@@ -471,10 +475,10 @@ END
 - Digunakan untuk mencatat administrasi kendaraan (STNK, BPKB, pajak, asuransi) setelah transaksi penjualan.
 - **Parameter:**
   - `@SalesAgreementID INT`
-  - `@RegistrationNumber VARCHAR(50)`
-  - `@OwnershipBookNumber VARCHAR(50)`
-  - `@TaxStatus VARCHAR(50)`
-  - `@InsuranceStatus VARCHAR(50)`
+  - `@RegistrationNumber VARCHAR(20)`
+  - `@OwnershipBookNumber VARCHAR(20)`
+  - `@TaxStatus VARCHAR(20)`
+  - `@InsuranceStatus VARCHAR(20)`
 - **Proses:**
   1. Validasi SalesAgreementID harus ada.
   2. Pastikan administrasi untuk transaksi ini belum ada.
@@ -506,7 +510,7 @@ EXEC sp_CreateCustomerComplaint 2001, 1001, '2025-07-28', 'AC tidak dingin', 'Op
   - `@SalesAgreementID INT` (opsional)
   - `@CreditAppID INT` (opsional)
   - `@PaymentAmount MONEY`
-  - `@PaymentDate DATE`
+  - `@PaymentDate DATETIME`
   - `@PaymentType VARCHAR(20)`
 - **Proses:**
   1. Minimal salah satu ID harus diisi.
@@ -618,6 +622,7 @@ Views menyediakan representasi data yang telah diformat dan disederhanakan untuk
 -   **Tujuan:** Memantau status lunas atau belum lunas dari setiap transaksi penjualan.
 -   **Kolom Utama:** `SalesAgreementID`, `CustomerName`, `TotalAmount`, `TotalPaid`, `PaymentStatus`.
 -   **Penggunaan:** Untuk bagian keuangan melacak tagihan yang belum lunas.
+-   **Catatan:** Status `PaymentStatus` (`'Paid'`/`'Unpaid'`) dihitung secara *real-time* berdasarkan histori pembayaran. Status ini bisa berbeda dengan kolom `Status` di tabel `SalesAgreement` yang diubah menjadi `'Completed'` oleh trigger `trg_UpdatePaymentStatus` setelah pembayaran lunas.
 -   **Contoh Penggunaan:**
     ```sql
     SELECT * FROM vw_PaymentStatus WHERE PaymentStatus = 'Unpaid';
@@ -651,6 +656,6 @@ Trigger digunakan untuk otomasi proses berdasarkan event yang terjadi pada tabel
 -   **Proses:** Setiap ada mobil yang terjual (baris baru di `SalesAgreementDetail`), stok mobil yang sesuai di `DealerInventory` akan dikurangi satu.
 
 ### b. `trg_UpdatePaymentStatus`
--   **Tujuan:** Memperbarui status `SalesAgreement` menjadi 'Paid' (Lunas) saat total pembayaran mencukupi.
+-   **Tujuan:** Memperbarui status `SalesAgreement` menjadi 'Completed' (Lunas) saat total pembayaran mencukupi.
 -   **Event Pemicu:** `AFTER INSERT, UPDATE` pada tabel `PaymentHistory`.
--   **Proses:** Setiap ada pembayaran baru atau perubahan, trigger akan menghitung total pembayaran. Jika total tersebut >= `TotalAmount` di `SalesAgreement`, statusnya diubah menjadi 'Paid'.
+-   **Proses:** Setiap ada pembayaran baru atau perubahan, trigger akan menghitung total pembayaran. Jika total tersebut >= `TotalAmount` di `SalesAgreement`, statusnya diubah menjadi 'Completed'.
