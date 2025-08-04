@@ -71,6 +71,10 @@ INSERT INTO CreditDocument (CreditAppID, DocumentType, DocumentPath, UploadDate)
 INSERT INTO SalesAgreement (DealerID, CustomerID, SalesPersonID, LOIID, TransactionDate, TotalAmount, Status) VALUES
 (1, 1, 1, 1, '2025-07-10', 590000000, 'Completed');
 
+-- SalesAgreementDetail (added to complete sample data for SalesAgreementID 1)
+INSERT INTO SalesAgreementDetail (SalesAgreementID, LOIDetailID, CarID, Price, Discount, Note) VALUES
+(1, 1, 1, 590000000, 10000000, 'Detail transaksi untuk Pajero Sport');
+
 -- PaymentHistory
 INSERT INTO PaymentHistory (SalesAgreementID, PaymentAmount, PaymentDate, PaymentType) VALUES
 (1, 590000000, '2025-07-11', 'Transfer');
