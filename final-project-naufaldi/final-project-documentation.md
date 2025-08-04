@@ -1,4 +1,4 @@
-# Final Project: Business Process Modeling for AutoCar Dealership (Refactored)
+# Final Project: Business Process Modeling for AutoCar Dealership
 
 ## 1. Pendahuluan
 
@@ -20,21 +20,21 @@ Repositori ini berisi skema database dan query SQL yang telah direfaktor untuk m
 │   └── fn_GetFinalPrice.sql
 ├── Stored Procedure/
 │   ├── sp_ApplyForCredit.sql
-│   ├── sp_CarDelivery.sql
-│   ├── sp_CreateAdministration.sql
-│   ├── sp_CreateComplaint.sql
-│   ├── sp_CreatePayment.sql
+│   ├── sp_CreateCarDelivery.sql
+│   ├── sp_CreateVehicleRegistration.sql
+│   ├── sp_CreateCustomerComplaint.sql
+│   ├── sp_CreatePaymentHistory.sql
 │   ├── sp_CreateWarrantyClaim.sql
 │   └── sp_RegisterCustomer.sql
 ├── Trigger/
 │   ├── trg_UpdatePaymentStatus.sql
 │   └── trg_UpdateStockAfterSale.sql
 └── View/
-    ├── vw_Available_Cars.sql
+    ├── vw_AvailableCars.sql
     ├── vw_CarStock.sql
-    ├── vw_Credit_Status.sql
+    ├── vw_CreditStatus.sql
     ├── vw_PaymentStatus.sql
-    ├── vw_Sales_Report.sql
+    ├── vw_SalesReport.sql
     └── vw_WarrantyClaimStatus.sql
 ```
 
@@ -69,21 +69,21 @@ Objek database seperti stored procedure, function, view, dan trigger dikelompokk
   - [`fn_GetFinalPrice.sql`](Function/fn_GetFinalPrice.sql)
 - **Stored Procedure:**
   - [`sp_ApplyForCredit.sql`](Stored%20Procedure/sp_ApplyForCredit.sql)
-  - [`sp_CarDelivery.sql`](Stored%20Procedure/sp_CarDelivery.sql)
-  - [`sp_CreateAdministration.sql`](Stored%20Procedure/sp_CreateAdministration.sql)
-  - [`sp_CreateComplaint.sql`](Stored%20Procedure/sp_CreateComplaint.sql)
-  - [`sp_CreatePayment.sql`](Stored%20Procedure/sp_CreatePayment.sql)
+  - [`sp_CreateCarDelivery.sql`](Stored%20Procedure/sp_CreateCarDelivery.sql)
+  - [`sp_CreateVehicleRegistration.sql`](Stored%20Procedure/sp_CreateVehicleRegistration.sql)
+  - [`sp_CreateCustomerComplaint.sql`](Stored%20Procedure/sp_CreateCustomerComplaint.sql)
+  - [`sp_CreatePaymentHistory.sql`](Stored%20Procedure/sp_CreatePaymentHistory.sql)
   - [`sp_CreateWarrantyClaim.sql`](Stored%20Procedure/sp_CreateWarrantyClaim.sql)
   - [`sp_RegisterCustomer.sql`](Stored%20Procedure/sp_RegisterCustomer.sql)
 - **Trigger:**
   - [`trg_UpdatePaymentStatus.sql`](Trigger/trg_UpdatePaymentStatus.sql)
   - [`trg_UpdateStockAfterSale.sql`](Trigger/trg_UpdateStockAfterSale.sql)
 - **View:**
-  - [`vw_Available_Cars.sql`](View/vw_Available_Cars.sql)
+  - [`vw_AvailableCars.sql`](View/vw_AvailableCars.sql)
   - [`vw_CarStock.sql`](View/vw_CarStock.sql)
-  - [`vw_Credit_Status.sql`](View/vw_Credit_Status.sql)
+  - [`vw_CreditStatus.sql`](View/vw_CreditStatus.sql)
   - [`vw_PaymentStatus.sql`](View/vw_PaymentStatus.sql)
-  - [`vw_Sales_Report.sql`](View/vw_Sales_Report.sql)
+  - [`vw_SalesReport.sql`](View/vw_SalesReport.sql)
   - [`vw_WarrantyClaimStatus.sql`](View/vw_WarrantyClaimStatus.sql)
 
 ### [`final-project-documentation.md`](final-project-documentation.md)
@@ -119,7 +119,7 @@ Dokumentasi ini berisi penjelasan teknis lengkap: detail tabel, kolom, relasi, E
 | 20  | ServiceHistory         | Layanan purna jual, seperti follow-up servis pertama.                           |
 | 21  | CustomerComplaint      | Catatan keluhan pelanggan terkait produk atau layanan.                          |
 | 22  | WarrantyClaim          | Klaim garansi kendaraan oleh pelanggan.                                         |
-| 23  | DealerInventory        | Data stok mobil di setiap dealer.                                               |
+| 23  | DealerInventory        | Data stok mobil di setiap dealer, termasuk harga, diskon, dan fee per dealer-mobil. |
 | 24  | InventoryTransfer      | Catatan mutasi (perpindahan) stok antar dealer.                                 |
 | 25  | CustomerFeedback       | Feedback atau survey kepuasan pelanggan setelah transaksi.                      |
 
@@ -179,7 +179,7 @@ erDiagram
     SalesAgreement ||--o{ WarrantyClaim : "terkait"
     SalesAgreement ||--o{ CustomerFeedback : "subjek dari"
 
-    LetterOfIntentDetail ||--|| SalesAgreementDetail : "dirinci dalam"
+    LetterOfIntentDetail o|--|| SalesAgreementDetail : "dirinci dalam"
 
     CarDelivery ||--o{ CarDeliverySchedule : "dijadwalkan"
     CarDelivery ||--o{ PreDeliveryInspection : "menjalani"

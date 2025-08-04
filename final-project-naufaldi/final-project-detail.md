@@ -1,4 +1,4 @@
-# Dokumentasi Awal: Business Process Modeling AutoCar Dealership (Refactored)
+# Dokumentasi Awal: Business Process Modeling AutoCar Dealership
 
 ## 1. Pendahuluan
 
@@ -129,7 +129,7 @@ erDiagram
     SalesAgreement ||--o{ WarrantyClaim : "terkait"
     SalesAgreement ||--o{ CustomerFeedback : "subjek dari"
 
-    LetterOfIntentDetail ||--|| SalesAgreementDetail : "dirinci dalam"
+    LetterOfIntentDetail o|--|| SalesAgreementDetail : "dirinci dalam"
 
     CarDelivery ||--o{ CarDeliverySchedule : "dijadwalkan"
     CarDelivery ||--o{ PreDeliveryInspection : "menjalani"
@@ -141,12 +141,12 @@ erDiagram
 | Nama Kolom       | Tipe Data      | Keterangan                               |
 |------------------|----------------|------------------------------------------|
 | LOIID            | INT, PK        | ID unik untuk setiap LOI                 |
-| DealerID         | INT, FK        | ID dealer tempat LOI dibuat              |
-| CustomerID       | INT, FK        | ID pelanggan yang membuat LOI            |
-| SalesPersonID    | INT, FK        | ID sales person yang menangani           |
+| DealerID         | INT, FK        | ID dealer tempat LOI dibuat (Wajib diisi) |
+| CustomerID       | INT, FK        | ID pelanggan yang membuat LOI (Wajib diisi) |
+| SalesPersonID    | INT, FK        | ID sales person yang menangani (Wajib diisi) |
 | ConsultHistoryID | INT, FK        | ID konsultasi terkait (opsional)         |
 | TestDriveID      | INT, FK        | ID test drive terkait (opsional)         |
-| LOIDate          | DATE           | Tanggal LOI dibuat                       |
+| LOIDate          | DATE           | Tanggal LOI dibuat (Wajib diisi)         |
 | PaymentMethod    | VARCHAR(20)    | Metode pembayaran yang disepakati       |
 | Note             | VARCHAR(200)   | Catatan umum untuk LOI                   |
 
@@ -154,9 +154,9 @@ erDiagram
 | Nama Kolom      | Tipe Data      | Keterangan                               |
 |-----------------|----------------|------------------------------------------|
 | LOIDetailID     | INT, PK        | ID unik untuk setiap detail LOI          |
-| LOIID           | INT, FK        | ID LOI header                            |
-| CarID           | INT, FK        | ID mobil yang dipesan                    |
-| AgreedPrice     | MONEY          | Harga final mobil                        |
+| LOIID           | INT, FK        | ID LOI header (Wajib diisi)              |
+| CarID           | INT, FK        | ID mobil yang dipesan (Wajib diisi)      |
+| AgreedPrice     | MONEY          | Harga final mobil (Wajib diisi)          |
 | Discount        | MONEY          | Diskon yang diberikan (opsional)         |
 | DownPayment     | MONEY          | Uang muka yang dibayar (opsional)        |
 | Note            | VARCHAR(200)   | Catatan spesifik untuk unit mobil ini    |
@@ -165,21 +165,22 @@ erDiagram
 | Nama Kolom        | Tipe Data      | Keterangan                               |
 |-------------------|----------------|------------------------------------------|
 | SalesAgreementID  | INT, PK        | ID unik untuk setiap transaksi           |
-| DealerID          | INT, FK        | ID dealer tempat transaksi terjadi       |
-| CustomerID        | INT, FK        | ID pelanggan yang bertransaksi           |
-| SalesPersonID     | INT, FK        | ID sales person yang menangani           |
+| DealerID          | INT, FK        | ID dealer tempat transaksi terjadi (Wajib diisi) |
+| CustomerID        | INT, FK        | ID pelanggan yang bertransaksi (Wajib diisi) |
+| SalesPersonID     | INT, FK        | ID sales person yang menangani (Wajib diisi) |
 | LOIID             | INT, FK        | ID LOI terkait (opsional)                |
-| TransactionDate   | DATE           | Tanggal transaksi                        |
+| TransactionDate   | DATE           | Tanggal transaksi (Wajib diisi)          |
 | TotalAmount       | MONEY          | Total nilai transaksi                    |
+| Status            | VARCHAR(20)    | Status transaksi (e.g., Paid, Unpaid)    |
 
 ### 4. Tabel: SalesAgreementDetail
 | Nama Kolom             | Tipe Data      | Keterangan                               |
 |------------------------|----------------|------------------------------------------|
 | SalesAgreementDetailID | INT, PK        | ID unik untuk setiap detail transaksi    |
-| SalesAgreementID       | INT, FK        | ID transaksi header                      |
+| SalesAgreementID       | INT, FK        | ID transaksi header (Wajib diisi)        |
 | LOIDetailID            | INT, FK        | ID detail LOI terkait (opsional)         |
-| CarID                  | INT, FK        | ID mobil yang dibeli                     |
-| Price                  | MONEY          | Harga mobil saat transaksi               |
+| CarID                  | INT, FK        | ID mobil yang dibeli (Wajib diisi)       |
+| Price                  | MONEY          | Harga mobil saat transaksi (Wajib diisi) |
 | Discount               | MONEY          | Diskon yang diberikan (opsional)         |
 | Note                   | VARCHAR(200)   | Catatan spesifik untuk unit mobil ini    |
 
@@ -187,29 +188,29 @@ erDiagram
 | Nama Kolom         | Tipe Data      | Keterangan                               |
 |--------------------|----------------|------------------------------------------|
 | ConsultHistoryID   | INT, PK        | ID unik untuk setiap konsultasi          |
-| DealerID           | INT, FK        | ID dealer tempat konsultasi              |
-| CustomerID         | INT, FK        | ID pelanggan yang berkonsultasi          |
-| SalesPersonID      | INT, FK        | ID sales person yang melayani            |
+| DealerID           | INT, FK        | ID dealer tempat konsultasi (Wajib diisi) |
+| CustomerID         | INT, FK        | ID pelanggan yang berkonsultasi (Wajib diisi) |
+| SalesPersonID      | INT, FK        | ID sales person yang melayani (Wajib diisi) |
 | CarID              | INT, FK        | ID mobil yang diminati (opsional)        |
 | Budget             | MONEY          | Anggaran pelanggan (opsional)            |
 | PaymentMethod      | VARCHAR(20)    | Metode pembayaran yang direncanakan     |
-| ConsultationDate   | DATETIME       | Tanggal konsultasi                       |
+| ConsultationDate   | DATETIME       | Tanggal konsultasi (Wajib diisi)         |
 | Note               | VARCHAR(200)   | Catatan dari konsultasi                  |
 
 ### 6. Tabel: Dealer
 | Nama Kolom    | Tipe Data      | Keterangan                               |
 |---------------|----------------|------------------------------------------|
 | DealerID      | INT, PK        | ID unik untuk setiap dealer              |
-| Name          | VARCHAR(100)   | Nama dealer                              |
-| City          | VARCHAR(50)    | Kota lokasi dealer                       |
+| Name          | VARCHAR(100)   | Nama dealer (Wajib diisi)                |
+| City          | VARCHAR(50)    | Kota lokasi dealer (Wajib diisi)         |
 | Address       | VARCHAR(200)   | Alamat lengkap dealer                    |
-| PhoneNumber   | VARCHAR(20)    | Nomor telepon dealer                     |
+| PhoneNumber   | VARCHAR(20)    | Nomor telepon dealer (Format divalidasi) |
 
 ### 7. Tabel: Customer
 | Nama Kolom    | Tipe Data      | Keterangan                               |
 |---------------|----------------|------------------------------------------|
 | CustomerID    | INT, PK        | ID unik untuk setiap pelanggan           |
-| Name          | VARCHAR(100)   | Nama lengkap pelanggan                   |
+| Name          | VARCHAR(100)   | Nama lengkap pelanggan (Wajib diisi)     |
 | PhoneNumber   | VARCHAR(20)    | Nomor telepon pelanggan                  |
 | Email         | VARCHAR(100)   | Alamat email pelanggan                   |
 | Address       | VARCHAR(200)   | Alamat lengkap pelanggan                 |
@@ -218,16 +219,16 @@ erDiagram
 | Nama Kolom      | Tipe Data      | Keterangan                               |
 |-----------------|----------------|------------------------------------------|
 | SalesPersonID   | INT, PK        | ID unik untuk setiap sales person        |
-| DealerID        | INT, FK        | ID dealer tempat sales person bekerja    |
-| Name            | VARCHAR(100)   | Nama lengkap sales person                |
+| DealerID        | INT, FK        | ID dealer tempat sales person bekerja (Wajib diisi) |
+| Name            | VARCHAR(100)   | Nama lengkap sales person (Wajib diisi)  |
 
 ### 9. Tabel: Car
 | Nama Kolom  | Tipe Data      | Keterangan                               |
 |-------------|----------------|------------------------------------------|
 | CarID       | INT, PK        | ID unik untuk setiap mobil               |
-| Model       | VARCHAR(100)   | Nama/model mobil (e.g., Mitsu Pajero)    |
-| CarType     | VARCHAR(50)    | Tipe mobil (e.g., SUV, MPV)              |
-| BasePrice   | MONEY          | Harga dasar mobil                        |
+| Model       | VARCHAR(100)   | Nama/model mobil (e.g., Mitsu Pajero) (Wajib diisi) |
+| CarType     | VARCHAR(50)    | Tipe mobil (e.g., SUV, MPV) (Wajib diisi) |
+| BasePrice   | MONEY          | Harga dasar mobil (Wajib diisi)          |
 | Year        | INT            | Tahun pembuatan mobil                    |
 | Color       | VARCHAR(30)    | Warna mobil                              |
 
@@ -235,37 +236,37 @@ erDiagram
 | Nama Kolom         | Tipe Data      | Keterangan                               |
 |--------------------|----------------|------------------------------------------|
 | TestDriveID        | INT, PK        | ID unik untuk setiap test drive          |
-| DealerID           | INT, FK        | ID dealer tempat test drive              |
-| CustomerID         | INT, FK        | ID pelanggan yang melakukan test drive   |
-| SalesPersonID      | INT, FK        | ID sales person yang mendampingi         |
-| CarID              | INT, FK        | ID mobil yang di-test drive              |
+| DealerID           | INT, FK        | ID dealer tempat test drive (Wajib diisi) |
+| CustomerID         | INT, FK        | ID pelanggan yang melakukan test drive (Wajib diisi) |
+| SalesPersonID      | INT, FK        | ID sales person yang mendampingi (Wajib diisi) |
+| CarID              | INT, FK        | ID mobil yang di-test drive (Wajib diisi) |
 | ConsultHistoryID   | INT, FK        | ID konsultasi terkait (opsional)         |
-| TestDriveDate      | DATETIME       | Tanggal test drive                       |
+| TestDriveDate      | DATETIME       | Tanggal test drive (Wajib diisi)         |
 | Note               | VARCHAR(200)   | Catatan dari test drive                  |
 
 ### 11. Tabel: Booking
 | Nama Kolom    | Tipe Data      | Keterangan                               |
 |---------------|----------------|------------------------------------------|
 | BookingID     | INT, PK        | ID unik untuk setiap booking             |
-| LOIID         | INT, FK        | ID LOI terkait                           |
-| BookingFee    | MONEY          | Jumlah booking fee                       |
-| BookingDate   | DATE           | Tanggal booking                          |
+| LOIID         | INT, FK        | ID LOI terkait (Wajib diisi)             |
+| BookingFee    | MONEY          | Jumlah booking fee (Wajib diisi)         |
+| BookingDate   | DATE           | Tanggal booking (Wajib diisi)            |
 | Status        | VARCHAR(20)    | Status booking (e.g., Confirmed, Cancelled) |
 
 ### 12. Tabel: CreditApplication
 | Nama Kolom         | Tipe Data      | Keterangan                               |
 |--------------------|----------------|------------------------------------------|
 | CreditAppID        | INT, PK        | ID unik untuk setiap pengajuan kredit    |
-| LOIID              | INT, FK        | ID LOI terkait                           |
-| LeasingCompanyID   | INT, FK        | ID perusahaan leasing                    |
-| ApplicationDate    | DATE           | Tanggal pengajuan                        |
+| LOIID              | INT, FK        | ID LOI terkait (Wajib diisi)             |
+| LeasingCompanyID   | INT, FK        | ID perusahaan leasing (opsional)         |
+| ApplicationDate    | DATE           | Tanggal pengajuan (Wajib diisi)          |
 | Status             | VARCHAR(20)    | Status pengajuan (e.g., Approved, Rejected) |
 
 ### 13. Tabel: LeasingCompany
 | Nama Kolom       | Tipe Data      | Keterangan                               |
 |------------------|----------------|------------------------------------------|
 | LeasingCompanyID | INT, PK        | ID unik untuk setiap perusahaan leasing  |
-| Name             | VARCHAR(100)   | Nama perusahaan leasing                  |
+| Name             | VARCHAR(100)   | Nama perusahaan leasing (Wajib diisi)    |
 | Address          | VARCHAR(200)   | Alamat perusahaan leasing                |
 | PhoneNumber      | VARCHAR(20)    | Nomor telepon perusahaan leasing         |
 
@@ -273,8 +274,8 @@ erDiagram
 | Nama Kolom         | Tipe Data      | Keterangan                               |
 |--------------------|----------------|------------------------------------------|
 | CreditDocumentID   | INT, PK        | ID unik untuk setiap dokumen             |
-| CreditAppID        | INT, FK        | ID pengajuan kredit terkait              |
-| DocumentType       | VARCHAR(50)    | Jenis dokumen (e.g., KTP, Slip Gaji)     |
+| CreditAppID        | INT, FK        | ID pengajuan kredit terkait (Wajib diisi) |
+| DocumentType       | VARCHAR(50)    | Jenis dokumen (e.g., KTP, Slip Gaji) (Wajib diisi) |
 | DocumentPath       | VARCHAR(200)   | Path file dokumen                        |
 | UploadDate         | DATE           | Tanggal upload dokumen                   |
 
@@ -284,15 +285,15 @@ erDiagram
 | PaymentHistoryID   | INT, PK        | ID unik untuk setiap pembayaran          |
 | SalesAgreementID   | INT, FK        | ID transaksi terkait (opsional)          |
 | CreditAppID        | INT, FK        | ID pengajuan kredit terkait (opsional)   |
-| PaymentAmount      | MONEY          | Jumlah pembayaran                        |
-| PaymentDate        | DATE           | Tanggal pembayaran                       |
+| PaymentAmount      | MONEY          | Jumlah pembayaran (Wajib diisi)          |
+| PaymentDate        | DATE           | Tanggal pembayaran (Wajib diisi)         |
 | PaymentType        | VARCHAR(20)    | Jenis pembayaran (e.g., DP, Lunas, Cicilan) |
 
 ### 16. Tabel: VehicleRegistration
 | Nama Kolom              | Tipe Data      | Keterangan                               |
 |-------------------------|----------------|------------------------------------------|
 | VehicleRegistrationID   | INT, PK        | ID unik untuk setiap administrasi        |
-| SalesAgreementID        | INT, FK        | ID transaksi terkait                     |
+| SalesAgreementID        | INT, FK        | ID transaksi terkait (Wajib diisi)       |
 | RegistrationNumber      | VARCHAR(50)    | Nomor STNK                               |
 | OwnershipBookNumber     | VARCHAR(50)    | Nomor BPKB                               |
 | TaxStatus               | VARCHAR(50)    | Status pajak                             |
@@ -302,24 +303,24 @@ erDiagram
 | Nama Kolom       | Tipe Data      | Keterangan                               |
 |------------------|----------------|------------------------------------------|
 | CarDeliveryID    | INT, PK        | ID unik untuk setiap pengiriman          |
-| SalesAgreementID | INT, FK        | ID transaksi terkait                     |
-| DeliveryDate     | DATETIME       | Tanggal pengiriman                       |
+| SalesAgreementID | INT, FK        | ID transaksi terkait (Wajib diisi)       |
+| DeliveryDate     | DATETIME       | Tanggal pengiriman (Wajib diisi)         |
 | Status           | VARCHAR(20)    | Status pengiriman (e.g., Delivered, In Progress) |
 
 ### 18. Tabel: CarDeliverySchedule
 | Nama Kolom              | Tipe Data      | Keterangan                               |
 |-------------------------|----------------|------------------------------------------|
 | CarDeliveryScheduleID   | INT, PK        | ID unik untuk setiap jadwal pengiriman   |
-| CarDeliveryID           | INT, FK        | ID pengiriman terkait                    |
-| ScheduledDate           | DATE           | Tanggal yang dijadwalkan                 |
+| CarDeliveryID           | INT, FK        | ID pengiriman terkait (Wajib diisi)      |
+| ScheduledDate           | DATE           | Tanggal yang dijadwalkan (Wajib diisi)   |
 | Note                    | VARCHAR(200)   | Catatan untuk jadwal pengiriman          |
 
 ### 19. Tabel: PreDeliveryInspection
 | Nama Kolom              | Tipe Data      | Keterangan                               |
 |-------------------------|----------------|------------------------------------------|
 | PreDeliveryInspectionID | INT, PK        | ID unik untuk setiap inspeksi            |
-| CarDeliveryID           | INT, FK        | ID pengiriman terkait                    |
-| InspectionDate          | DATE           | Tanggal inspeksi                         |
+| CarDeliveryID           | INT, FK        | ID pengiriman terkait (Wajib diisi)      |
+| InspectionDate          | DATE           | Tanggal inspeksi (Wajib diisi)           |
 | InspectorName           | VARCHAR(100)   | Nama inspektur                           |
 | Note                    | VARCHAR(200)   | Catatan dari inspeksi                    |
 
@@ -327,8 +328,8 @@ erDiagram
 | Nama Kolom       | Tipe Data      | Keterangan                               |
 |------------------|----------------|------------------------------------------|
 | ServiceID        | INT, PK        | ID unik untuk setiap layanan purna jual  |
-| SalesAgreementID | INT, FK        | ID transaksi terkait                     |
-| ServiceDate      | DATE           | Tanggal layanan                          |
+| SalesAgreementID | INT, FK        | ID transaksi terkait (Wajib diisi)       |
+| ServiceDate      | DATE           | Tanggal layanan (Wajib diisi)            |
 | ServiceType      | VARCHAR(50)    | Jenis layanan (e.g., Servis Pertama)     |
 | Note             | VARCHAR(200)   | Catatan dari layanan                     |
 
@@ -336,9 +337,9 @@ erDiagram
 | Nama Kolom          | Tipe Data      | Keterangan                               |
 |---------------------|----------------|------------------------------------------|
 | CustomerComplaintID | INT, PK        | ID unik untuk setiap keluhan             |
-| CustomerID          | INT, FK        | ID pelanggan yang mengajukan keluhan     |
+| CustomerID          | INT, FK        | ID pelanggan yang mengajukan keluhan (Wajib diisi) |
 | SalesAgreementID    | INT, FK        | ID transaksi terkait (opsional)          |
-| ComplaintDate       | DATETIME       | Tanggal keluhan                          |
+| ComplaintDate       | DATETIME       | Tanggal keluhan (Wajib diisi)            |
 | Description         | VARCHAR(200)   | Deskripsi keluhan                        |
 | Status              | VARCHAR(20)    | Status penanganan keluhan                |
 
@@ -346,9 +347,9 @@ erDiagram
 | Nama Kolom         | Tipe Data      | Keterangan                               |
 |--------------------|----------------|------------------------------------------|
 | WarrantyClaimID    | INT, PK        | ID unik untuk setiap klaim garansi       |
-| CustomerID         | INT, FK        | ID pelanggan yang mengajukan klaim       |
+| CustomerID         | INT, FK        | ID pelanggan yang mengajukan klaim (Wajib diisi) |
 | SalesAgreementID   | INT, FK        | ID transaksi terkait (opsional)          |
-| ClaimDate          | DATETIME       | Tanggal klaim                            |
+| ClaimDate          | DATETIME       | Tanggal klaim (Wajib diisi)              |
 | Description        | VARCHAR(200)   | Deskripsi klaim                          |
 | Status             | VARCHAR(20)    | Status penanganan klaim                  |
 
@@ -356,30 +357,30 @@ erDiagram
 | Nama Kolom          | Tipe Data      | Keterangan                               |
 |---------------------|----------------|------------------------------------------|
 | DealerInventoryID   | INT, PK        | ID unik untuk setiap entri inventaris    |
-| DealerID            | INT, FK        | ID dealer pemilik stok                   |
-| CarID               | INT, FK        | ID mobil dalam stok                      |
-| Stock               | INT            | Jumlah stok mobil                        |
-| Price               | MONEY          | Harga jual mobil di dealer ini           |
-| DiscountPercent     | DECIMAL(5,2)   | Persentase diskon default dealer-mobil   |
-| FeePercent          | DECIMAL(5,2)   | Persentase fee dealer-mobil              |
+| DealerID            | INT, FK        | ID dealer pemilik stok (Wajib diisi)     |
+| CarID               | INT, FK        | ID mobil dalam stok (Wajib diisi)        |
+| Stock               | INT            | Jumlah stok mobil (Wajib diisi)          |
+| Price               | MONEY          | Harga jual mobil di dealer ini (Wajib diisi) |
+| DiscountPercent     | FLOAT          | Persentase diskon default (Default: 0)   |
+| FeePercent          | FLOAT          | Persentase fee default (Default: 0)      |
 
 ### 24. Tabel: InventoryTransfer
 | Nama Kolom          | Tipe Data      | Keterangan                               |
 |---------------------|----------------|------------------------------------------|
 | InventoryTransferID | INT, PK        | ID unik untuk setiap mutasi stok         |
-| FromDealerID        | INT, FK        | ID dealer asal                           |
-| ToDealerID          | INT, FK        | ID dealer tujuan                         |
-| CarID               | INT, FK        | ID mobil yang dimutasi                   |
-| Quantity            | INT            | Jumlah mobil yang dimutasi               |
-| MutationDate        | DATE           | Tanggal mutasi                           |
+| FromDealerID        | INT, FK        | ID dealer asal (Wajib diisi)             |
+| ToDealerID          | INT, FK        | ID dealer tujuan (Wajib diisi)           |
+| CarID               | INT, FK        | ID mobil yang dimutasi (Wajib diisi)     |
+| Quantity            | INT            | Jumlah mobil yang dimutasi (Wajib diisi) |
+| MutationDate        | DATE           | Tanggal mutasi (Wajib diisi)             |
 
 ### 25. Tabel: CustomerFeedback
 | Nama Kolom         | Tipe Data      | Keterangan                               |
 |--------------------|----------------|------------------------------------------|
 | CustomerFeedbackID | INT, PK        | ID unik untuk setiap feedback            |
-| CustomerID         | INT, FK        | ID pelanggan yang memberikan feedback    |
+| CustomerID         | INT, FK        | ID pelanggan yang memberikan feedback (Wajib diisi) |
 | SalesAgreementID   | INT, FK        | ID transaksi terkait (opsional)          |
-| FeedbackDate       | DATE           | Tanggal feedback                         |
+| FeedbackDate       | DATE           | Tanggal feedback (Wajib diisi)           |
 | Rating             | INT            | Peringkat kepuasan (1-5)                 |
 | Comment            | VARCHAR(200)   | Komentar dari pelanggan                  |
 
@@ -536,29 +537,40 @@ EXEC sp_CreateWarrantyClaim 2001, 1001, '2025-07-28', 'Klakson mati', 'Open';
 
 ### 1. Modularisasi Perhitungan Harga, Diskon, dan Fee
 
-Fungsi-fungsi modular berikut digunakan untuk mengambil dan menghitung diskon, fee, dan harga akhir berdasarkan data master di DealerInventory:
+Fungsi-fungsi modular berikut digunakan untuk mengambil dan menghitung diskon, fee, dan harga akhir. Koneksi dari `LetterOfIntentDetail` ke `DealerInventory` dilakukan secara tidak langsung melalui `LetterOfIntent` (untuk mendapatkan `DealerID`) dan `Car` (untuk mendapatkan `CarID`), yang kemudian digunakan untuk mencari data yang sesuai di `DealerInventory`.
 
 #### a. `fn_GetDiscountAmount`
-- Mengambil persentase diskon dari DealerInventory, lalu menghitung nilai diskon dari harga dasar.
+-   **Tujuan:** Menghitung dan mengambil jumlah diskon untuk sebuah unit mobil yang tercatat dalam `LetterOfIntentDetail`. Perhitungan didasarkan pada persentase diskon yang ditetapkan di `DealerInventory`.
+-   **Parameter:**
+    -   `@LOIDetailID INT`: ID unik dari detail item dalam `LetterOfIntent`.
+-   **Hasil:** `MONEY` - Mengembalikan jumlah diskon. Jika tidak ada diskon, mengembalikan 0.
+-   **Contoh Penggunaan:**
+    ```sql
+    -- Asumsi LOIDetailID 1 ada di database
+    SELECT dbo.fn_GetDiscountAmount(1);
+    ```
 
 #### b. `fn_GetFeeAmount`
-- Mengambil persentase fee dari DealerInventory, lalu menghitung nilai fee dari harga dasar.
+-   **Tujuan:** Menghitung dan mengambil jumlah biaya (fee) tambahan untuk sebuah unit mobil yang tercatat dalam `LetterOfIntentDetail`. Perhitungan didasarkan pada persentase fee yang ditetapkan di `DealerInventory`.
+-   **Parameter:**
+    -   `@LOIDetailID INT`: ID unik dari detail item dalam `LetterOfIntent`.
+-   **Hasil:** `MONEY` - Mengembalikan jumlah fee. Jika tidak ada fee, mengembalikan 0.
+-   **Contoh Penggunaan:**
+    ```sql
+    -- Asumsi LOIDetailID 1 ada di database
+    SELECT dbo.fn_GetFeeAmount(1);
+    ```
 
 #### c. `fn_GetFinalPrice`
-- Menghitung harga akhir mobil setelah diskon dan fee, dengan mengambil data Price, DiscountPercent, FeePercent dari DealerInventory.
-
-Contoh implementasi:
-
-```sql
--- Mendapatkan nilai diskon
-SELECT dbo.fn_GetDiscountAmount(@DealerInventoryID);
-
--- Mendapatkan nilai fee
-SELECT dbo.fn_GetFeeAmount(@DealerInventoryID);
-
--- Mendapatkan harga akhir
-SELECT dbo.fn_GetFinalPrice(@DealerInventoryID);
-```
+-   **Tujuan:** Menghitung harga final untuk sebuah unit mobil di `LetterOfIntentDetail` dengan mengambil harga dasar, menguranginya dengan diskon, dan menambahkannya dengan fee. Fungsi ini memanggil `fn_GetDiscountAmount` dan `fn_GetFeeAmount`.
+-   **Parameter:**
+    -   `@LOIDetailID INT`: ID unik dari detail item dalam `LetterOfIntent`.
+-   **Hasil:** `MONEY` - Mengembalikan harga final yang harus dibayar.
+-   **Contoh Penggunaan:**
+    ```sql
+    -- Asumsi LOIDetailID 1 ada di database
+    SELECT dbo.fn_GetFinalPrice(1);
+    ```
 #### d. `fn_CalculateTotalPrice`
 - Fungsi ini digunakan untuk menghitung total harga setelah diskon sederhana.
 - **Parameter:**  
@@ -573,221 +585,72 @@ SELECT dbo.fn_CalculateTotalPrice(300000000, 15000000); -- hasil: 285000000
 
 ## 9. Views
 
-### 1. Laporan Penjualan
-View ini akan digunakan untuk menampilkan laporan penjualan, termasuk harga, diskon, fee, dan harga akhir berdasarkan data DealerInventory.
+Views menyediakan representasi data yang telah diformat dan disederhanakan untuk kebutuhan pelaporan atau tampilan.
 
+### a. `vw_AvailableCars`
+-   **Tujuan:** Menampilkan daftar semua mobil yang stoknya tersedia (`Stock > 0`) di semua dealer.
+-   **Kolom Utama:** `DealerName`, `CarModel`, `Stock`, `Price`, `DiscountPercent`.
+-   **Penggunaan:** Untuk tim penjualan melihat ketersediaan unit secara cepat.
+-   **Contoh Penggunaan:**
+    ```sql
+    SELECT * FROM vw_AvailableCars WHERE CarType = 'SUV';
+    ```
 
-**Nama:** `vw_Sales_Report`
+### b. `vw_CarStock`
+-   **Tujuan:** Menyediakan data stok mendetail per dealer, termasuk ID, untuk keperluan manajemen inventaris.
+-   **Kolom Utama:** `DealerID`, `DealerName`, `CarID`, `CarModel`, `StockDealer`.
+-   **Penggunaan:** Untuk manajer dealer memantau stok di cabang mereka.
+-   **Contoh Penggunaan:**
+    ```sql
+    SELECT * FROM vw_CarStock WHERE DealerID = 3;
+    ```
 
-#### 4. View Tambahan
+### c. `vw_CreditStatus`
+-   **Tujuan:** Memberikan ringkasan status dari semua pengajuan kredit.
+-   **Kolom Utama:** `CreditAppID`, `CustomerName`, `LeasingCompanyName`, `ApplicationDate`, `Status`.
+-   **Penggunaan:** Untuk tim admin memantau dan menindaklanjuti pengajuan kredit.
+-   **Contoh Penggunaan:**
+    ```sql
+    SELECT * FROM vw_CreditStatus WHERE Status = 'Pending';
+    ```
 
-##### a. `vw_CarStock`
-- View ini menampilkan stok mobil yang tersedia di setiap dealer beserta detail mobil dan harga.
-- **Kolom:** DealerID, DealerName, CarID, CarModel, CarType, BasePrice, StockDealer, Price, DiscountPercent, FeePercent
-- **Fungsi:** Memudahkan monitoring stok mobil per dealer dan detail harga.
-- **Cuplikan kode:**
-```sql
-CREATE VIEW vw_CarStock AS
-SELECT
-    d.DealerID,
-    d.Name AS DealerName,
-    c.CarID,
-    c.Model AS CarModel,
-    c.CarType,
-    c.BasePrice,
-    i.Stock AS StockDealer,
-    i.Price,
-    i.DiscountPercent,
-    i.FeePercent
-FROM
-    DealerInventory i
-    JOIN Car c ON i.CarID = c.CarID
-    JOIN Dealer d ON i.DealerID = d.DealerID
-WHERE
-    i.Stock > 0;
-```
+### d. `vw_PaymentStatus`
+-   **Tujuan:** Memantau status lunas atau belum lunas dari setiap transaksi penjualan.
+-   **Kolom Utama:** `SalesAgreementID`, `CustomerName`, `TotalAmount`, `TotalPaid`, `PaymentStatus`.
+-   **Penggunaan:** Untuk bagian keuangan melacak tagihan yang belum lunas.
+-   **Contoh Penggunaan:**
+    ```sql
+    SELECT * FROM vw_PaymentStatus WHERE PaymentStatus = 'Unpaid';
+    ```
 
-##### b. `vw_PaymentStatus`
-- View ini menampilkan status pembayaran setiap transaksi penjualan.
-- **Kolom:** SalesAgreementID, CustomerName, TransactionDate, TotalAmount, TotalPaid, PaymentStatus, PaymentCount
-- **Fungsi:** Memantau apakah transaksi sudah lunas atau belum berdasarkan total pembayaran yang masuk.
-- **Cuplikan kode:**
-```sql
-CREATE VIEW vw_PaymentStatus AS
-SELECT
-    sa.SalesAgreementID,
-    c.Name AS CustomerName,
-    sa.TransactionDate,
-    sa.TotalAmount,
-    SUM(ph.PaymentAmount) AS TotalPaid,
-    CASE
-        WHEN sa.TotalAmount IS NOT NULL AND SUM(ph.PaymentAmount) >= sa.TotalAmount THEN 'Paid'
-        ELSE 'Unpaid'
-    END AS PaymentStatus,
-    COUNT(ph.PaymentHistoryID) AS PaymentCount
-FROM
-    SalesAgreement sa
-    JOIN Customer c ON sa.CustomerID = c.CustomerID
-    LEFT JOIN PaymentHistory ph ON sa.SalesAgreementID = ph.SalesAgreementID
-GROUP BY
-    sa.SalesAgreementID, c.Name, sa.TransactionDate, sa.TotalAmount;
-```
+### e. `vw_SalesReport`
+-   **Tujuan:** Menghasilkan laporan penjualan ringkas yang mencakup detail transaksi, pelanggan, dan harga akhir.
+-   **Kolom Utama:** `SalesAgreementID`, `TransactionDate`, `CustomerName`, `SalesPersonName`, `CarModel`, `TotalPrice`.
+-   **Penggunaan:** Untuk manajemen menganalisis performa penjualan.
+-   **Contoh Penggunaan:**
+    ```sql
+    SELECT * FROM vw_SalesReport WHERE YEAR(TransactionDate) = 2025;
+    ```
 
-##### c. `vw_WarrantyClaimStatus`
-- View ini menampilkan status klaim garansi kendaraan oleh pelanggan.
-- **Kolom:** WarrantyClaimID, CustomerName, SalesAgreementID, TransactionDate, ClaimDate, ClaimDescription, ClaimStatus
-- **Fungsi:** Memantau klaim garansi yang diajukan pelanggan beserta status dan detail transaksi terkait.
-- **Cuplikan kode:**
-```sql
-CREATE VIEW vw_WarrantyClaimStatus AS
-SELECT
-    wc.WarrantyClaimID,
-    c.Name AS CustomerName,
-    sa.SalesAgreementID,
-    sa.TransactionDate,
-    wc.ClaimDate,
-    wc.Description AS ClaimDescription,
-    wc.Status AS ClaimStatus
-FROM
-    WarrantyClaim wc
-    JOIN Customer c ON wc.CustomerID = c.CustomerID
-    LEFT JOIN SalesAgreement sa ON wc.SalesAgreementID = sa.SalesAgreementID;
-```
-**Proses:**
-1.  Menggabungkan data dari tabel `SalesAgreement`, `SalesAgreementDetail`, `Customer`, `SalesPerson`, dan `Car`.
-2.  Menampilkan informasi detail tentang setiap transaksi.
-
-```sql
-CREATE VIEW vw_Sales_Report AS
-SELECT
-    sa.SalesAgreementID,
-    sa.TransactionDate,
-    c.Name AS CustomerName,
-    sp.Name AS SalesPersonName,
-    cr.Model AS CarModel,
-    di.Price,
-    di.DiscountPercent,
-    di.FeePercent,
-    dbo.fn_GetDiscountAmount(di.DealerInventoryID) AS DiscountAmount,
-    dbo.fn_GetFeeAmount(di.DealerInventoryID) AS FeeAmount,
-    dbo.fn_GetFinalPrice(di.DealerInventoryID) AS FinalPrice
-FROM
-    SalesAgreement sa
-    JOIN SalesAgreementDetail sad ON sa.SalesAgreementID = sad.SalesAgreementID
-    JOIN DealerInventory di ON sad.CarID = di.CarID AND sa.DealerID = di.DealerID
-    JOIN Customer c ON sa.CustomerID = c.CustomerID
-    JOIN SalesPerson sp ON sa.SalesPersonID = sp.SalesPersonID
-    JOIN Car cr ON sad.CarID = cr.CarID;
-```
-
-### 2. Status Kredit
-### 11. Trigger Tambahan
-
-#### a. `trg_UpdatePaymentStatus`
-- Trigger ini digunakan untuk mengupdate status transaksi penjualan menjadi 'Paid' (Lunas) secara otomatis jika total pembayaran yang masuk ke PaymentHistory sudah sama atau lebih besar dari nilai total transaksi (TotalAmount) pada SalesAgreement.
-- **Event:** AFTER INSERT, UPDATE pada tabel PaymentHistory
-- **Proses:**
-  1. Setiap ada pembayaran baru atau update pembayaran, trigger akan menjumlahkan seluruh PaymentAmount untuk setiap SalesAgreementID.
-  2. Jika total pembayaran >= TotalAmount, maka status transaksi di SalesAgreement diubah menjadi 'Paid'.
-- **Contoh skenario:**
-  - Customer melakukan beberapa kali pembayaran (DP, cicilan, pelunasan) hingga totalnya memenuhi TotalAmount, maka status otomatis menjadi 'Paid'.
-- **Cuplikan kode:**
-```sql
-CREATE TRIGGER trg_UpdatePaymentStatus
-ON PaymentHistory
-AFTER INSERT, UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    UPDATE sa
-    SET Status = 'Paid'
-    FROM SalesAgreement sa
-    WHERE sa.SalesAgreementID IN (
-        SELECT p.SalesAgreementID
-        FROM inserted p
-        WHERE p.SalesAgreementID IS NOT NULL
-    )
-    AND sa.TotalAmount IS NOT NULL
-    AND (
-        SELECT SUM(PaymentAmount)
-        FROM PaymentHistory
-        WHERE SalesAgreementID = sa.SalesAgreementID
-    ) >= sa.TotalAmount;
-END
-```
-View ini akan digunakan untuk menampilkan status pengajuan kredit.
-
-**Nama:** `vw_Credit_Status`
-
-**Proses:**
-1.  Menggabungkan data dari tabel `CreditApplication`, `Customer`, dan `LeasingCompany`.
-2.  Menampilkan informasi tentang status setiap pengajuan kredit.
-
-```sql
-CREATE VIEW vw_Credit_Status AS
-SELECT
-    ca.CreditAppID,
-    c.Name AS CustomerName,
-    l.Name AS LeasingCompanyName,
-    ca.ApplicationDate,
-    ca.Status
-FROM
-    CreditApplication ca
-    JOIN LetterOfIntent loi ON ca.LOIID = loi.LOIID
-    JOIN Customer c ON loi.CustomerID = c.CustomerID
-    JOIN LeasingCompany l ON ca.LeasingCompanyID = l.LeasingCompanyID;
-```
-
-### 3. Daftar Mobil Tersedia
-View ini akan digunakan untuk menampilkan daftar mobil yang tersedia di setiap dealer, beserta harga, diskon, dan fee default dari DealerInventory.
-
-**Nama:** `vw_Available_Cars`
-
-**Proses:**
-1.  Menggabungkan data dari tabel `DealerInventory`, `Car`, dan `Dealer`.
-2.  Menampilkan informasi tentang mobil yang tersedia di setiap dealer.
-
-```sql
-CREATE VIEW vw_Available_Cars AS
-SELECT
-    d.Name AS DealerName,
-    c.Model AS CarModel,
-    c.CarType,
-    c.BasePrice,
-    i.Stock,
-    i.Price,
-    i.DiscountPercent,
-    i.FeePercent
-FROM
-    DealerInventory i
-    JOIN Car c ON i.CarID = c.CarID
-    JOIN Dealer d ON i.DealerID = d.DealerID
-WHERE
-    i.Stock > 0;
-```
+### f. `vw_WarrantyClaimStatus`
+-   **Tujuan:** Menyediakan ringkasan dari semua klaim garansi yang diajukan pelanggan.
+-   **Kolom Utama:** `WarrantyClaimID`, `CustomerName`, `ClaimDate`, `ClaimDescription`, `ClaimStatus`.
+-   **Penggunaan:** Untuk tim layanan purna jual mengelola dan melacak klaim garansi.
+-   **Contoh Penggunaan:**
+    ```sql
+    SELECT * FROM vw_WarrantyClaimStatus WHERE ClaimStatus = 'Open';
+    ```
 
 ## 10. Triggers
 
-### 1. Update Stok Mobil
-Trigger ini akan digunakan untuk mengupdate stok mobil secara otomatis setelah transaksi selesai.
+Trigger digunakan untuk otomasi proses berdasarkan event yang terjadi pada tabel tertentu.
 
-**Nama:** `trg_UpdateStockAfterSale`
+### a. `trg_UpdateStockAfterSale`
+-   **Tujuan:** Mengurangi stok mobil di `DealerInventory` secara otomatis setelah penjualan.
+-   **Event Pemicu:** `AFTER INSERT` pada tabel `SalesAgreementDetail`.
+-   **Proses:** Setiap ada mobil yang terjual (baris baru di `SalesAgreementDetail`), stok mobil yang sesuai di `DealerInventory` akan dikurangi satu.
 
-**Proses:**
-1.  Trigger akan aktif setelah ada data baru yang ditambahkan ke tabel `SalesAgreementDetail`.
-2.  Mengurangi jumlah stok mobil di tabel `DealerInventory` sesuai dengan mobil yang terjual.
-
-```sql
-CREATE TRIGGER trg_UpdateStockAfterSale
-ON SalesAgreementDetail
-AFTER INSERT
-AS
-BEGIN
-    UPDATE DealerInventory
-    SET Stock = Stock - 1
-    FROM DealerInventory i
-    JOIN inserted ins ON i.CarID = ins.CarID
-    JOIN SalesAgreement sa ON ins.SalesAgreementID = sa.SalesAgreementID
-    WHERE i.DealerID = sa.DealerID;
-END
+### b. `trg_UpdatePaymentStatus`
+-   **Tujuan:** Memperbarui status `SalesAgreement` menjadi 'Paid' (Lunas) saat total pembayaran mencukupi.
+-   **Event Pemicu:** `AFTER INSERT, UPDATE` pada tabel `PaymentHistory`.
+-   **Proses:** Setiap ada pembayaran baru atau perubahan, trigger akan menghitung total pembayaran. Jika total tersebut >= `TotalAmount` di `SalesAgreement`, statusnya diubah menjadi 'Paid'.

@@ -6,10 +6,11 @@ RETURNS MONEY
 AS
 BEGIN
     DECLARE @Price MONEY, @Discount MONEY, @Fee MONEY
-    SELECT @Price = di.Price
-    FROM LetterOfIntentDetail lod
-    JOIN DealerInventory di ON lod.DealerInventoryID = di.DealerInventoryID
-    WHERE lod.LOIDetailID = @LOIDetailID
+   SELECT @Price = di.Price
+   FROM LetterOfIntentDetail lod
+   JOIN LetterOfIntent loi ON lod.LOIID = loi.LOIID
+   JOIN DealerInventory di ON loi.DealerID = di.DealerID AND lod.CarID = di.CarID
+   WHERE lod.LOIDetailID = @LOIDetailID
 
     SELECT @Discount = dbo.fn_GetDiscountAmount(@LOIDetailID)
     SELECT @Fee = dbo.fn_GetFeeAmount(@LOIDetailID)
