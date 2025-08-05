@@ -29,16 +29,16 @@ BankSyariahIndonesia/
 
 ## 3. Deskripsi File Utama
 
-### [`15juli2025.sql`](/15juli2025.sql:1)
+### [`15juli2025.sql`](/15juli2025.sql)
 Kumpulan query SQL sederhana untuk seleksi data pada tabel produk dan karyawan, seperti filter harga produk, tanggal perekrutan, dan pencarian nama produk.
 
-### [`exercise1.sql`](/exercise1.sql:1)
+### [`exercise1.sql`](/exercise1.sql)
 Berisi pembuatan skema database untuk sistem manufaktur otomotif, meliputi tabel Plant, CarModel, ProductionPlan, Dealer, Customer, CarSale, MaintenanceLog, PartInventory, dan CustomerFeedback. Setiap tabel dilengkapi constraint dan relasi antar entitas.
 
-### [`exercise2.sql`](/exercise2.sql:1)
+### [`exercise2.sql`](/exercise2.sql)
 Kumpulan query SQL lanjutan untuk analisis data penjualan, produk, karyawan, dan pelanggan. Meliputi operasi join, agregasi, grouping, dan filter data pada berbagai tabel.
 
-### [`exercise4.sql`](/exercise4.sql:1)
+### [`exercise4.sql`](/exercise4.sql)
 Berisi pembuatan beberapa view (vw_*) untuk menampilkan katalog produk aktif, direktori karyawan, ringkasan order penjualan, harga produk per kategori, pelanggan loyal, dan performa salesperson.
 
 ### Folder [`exercise3/`](/exercise3/)
@@ -46,22 +46,22 @@ Berisi enam studi kasus pembuatan skema database beserta ilustrasi diagram (PNG)
 
 ## 4. Detail exercise3
 
-- **[`case1.sql`](/exercise3/case1.sql:1)**  
+- **[`case1.sql`](/exercise3/case1.sql)**  
   Skema database untuk sistem pengujian kendaraan (VehicleTesting): tabel CarModel, PrototypeVehicle, TestEngineer, TestLocation, dan VehicleTest.
 
-- **[`case2.sql`](/exercise3/case2.sql:1)**  
+- **[`case2.sql`](/exercise3/case2.sql)**  
   Skema database pelatihan karyawan (EmployeeTraining): tabel Employee, Instructor, TrainingCourse, TrainingSession, dan ParticipationRecord.
 
-- **[`case3.sql`](/exercise3/case3.sql:1)**  
+- **[`case3.sql`](/exercise3/case3.sql)**  
   Skema database pengadaan sparepart (SparePartProcurement): tabel PartCategory, Part, Supplier, dan SupplierPartOffer.
 
-- **[`case4.sql`](/exercise3/case4.sql:1)**  
+- **[`case4.sql`](/exercise3/case4.sql)**  
   Skema database rental mobil (CarRental): tabel RentalBranch, Vehicle, Customer, Employee, dan RentalContract.
 
-- **[`case5.sql`](/exercise3/case5.sql:1)**  
+- **[`case5.sql`](/exercise3/case5.sql)**  
   Skema database sistem garansi kendaraan (WarrantySystem): tabel Customer, Car, WarrantyRegistration, dan WarrantyClaim.
 
-- **[`case6.sql`](/exercise3/case6.sql:1)**  
+- **[`case6.sql`](/exercise3/case6.sql)**  
   (File tersedia, isi dapat berupa skema database lain, silakan cek file terkait.)
 
 Setiap kasus dilengkapi file PNG sebagai ilustrasi diagram relasi antar tabel.
