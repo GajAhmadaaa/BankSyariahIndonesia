@@ -253,7 +253,7 @@ CREATE TABLE CustomerComplaint (
 CREATE TABLE WarrantyClaim (
     WarrantyClaimID INT IDENTITY(1,1) PRIMARY KEY,
     CustomerID INT NOT NULL,
-    SalesAgreementID INT,
+    SalesAgreementID INT NOT NULL,
     ClaimDate DATETIME NOT NULL,
     Description VARCHAR(200),
     Status VARCHAR(20),
@@ -271,7 +271,8 @@ CREATE TABLE DealerInventory (
     DiscountPercent FLOAT NOT NULL DEFAULT 0,
     FeePercent FLOAT NOT NULL DEFAULT 0,
     FOREIGN KEY (DealerID) REFERENCES Dealer(DealerID),
-    FOREIGN KEY (CarID) REFERENCES Car(CarID)
+    FOREIGN KEY (CarID) REFERENCES Car(CarID),
+    CONSTRAINT UQ_DealerInventory_DealerCar UNIQUE (DealerID, CarID)
 );
 
 -- 24. InventoryTransfer

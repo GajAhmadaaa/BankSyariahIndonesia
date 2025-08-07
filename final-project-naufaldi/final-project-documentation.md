@@ -119,7 +119,7 @@ Dokumentasi ini berisi penjelasan teknis lengkap: detail tabel, kolom, relasi, E
 | 20  | ServiceHistory         | Layanan purna jual, seperti follow-up servis pertama.                           |
 | 21  | CustomerComplaint      | Catatan keluhan pelanggan terkait produk atau layanan.                          |
 | 22  | WarrantyClaim          | Klaim garansi kendaraan oleh pelanggan.                                         |
-| 23  | DealerInventory        | Data stok mobil di setiap dealer, termasuk harga, diskon, dan fee per dealer-mobil. |
+| 23  | DealerInventory        | Data stok mobil di setiap dealer, termasuk harga, diskon, dan fee per dealer-mobil. Kombinasi (DealerID, CarID) bersifat unik untuk mencegah duplikasi entri stok per dealer-mobil. |
 | 24  | InventoryTransfer      | Catatan mutasi (perpindahan) stok antar dealer.                                 |
 | 25  | CustomerFeedback       | Feedback atau survey kepuasan pelanggan setelah transaksi.                      |
 
