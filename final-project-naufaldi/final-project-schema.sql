@@ -191,12 +191,12 @@ CREATE TABLE PaymentHistory (
 -- 16. VehicleRegistration
 CREATE TABLE VehicleRegistration (
     VehicleRegistrationID INT IDENTITY(1,1) PRIMARY KEY,
-    SalesAgreementID INT NOT NULL,
+    SalesAgreementDetailID INT NOT NULL,
     RegistrationNumber VARCHAR(20),
     OwnershipBookNumber VARCHAR(20),
     TaxStatus VARCHAR(20),
     InsuranceStatus VARCHAR(20),
-    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
+    FOREIGN KEY (SalesAgreementDetailID) REFERENCES SalesAgreementDetail(SalesAgreementDetailID)
 );
 
 -- 17. CarDelivery
@@ -230,11 +230,11 @@ CREATE TABLE PreDeliveryInspection (
 -- 20. ServiceHistory
 CREATE TABLE ServiceHistory (
     ServiceID INT IDENTITY(1,1) PRIMARY KEY,
-    SalesAgreementID INT NOT NULL,
+    SalesAgreementDetailID INT NOT NULL,
     ServiceDate DATETIME NOT NULL,
     ServiceType VARCHAR(50),
     Note VARCHAR(200),
-    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
+    FOREIGN KEY (SalesAgreementDetailID) REFERENCES SalesAgreementDetail(SalesAgreementDetailID)
 );
 
 -- 21. CustomerComplaint
@@ -253,12 +253,12 @@ CREATE TABLE CustomerComplaint (
 CREATE TABLE WarrantyClaim (
     WarrantyClaimID INT IDENTITY(1,1) PRIMARY KEY,
     CustomerID INT NOT NULL,
-    SalesAgreementID INT NOT NULL,
+    SalesAgreementDetailID INT NOT NULL,
     ClaimDate DATETIME NOT NULL,
     Description VARCHAR(200),
     Status VARCHAR(20),
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
-    FOREIGN KEY (SalesAgreementID) REFERENCES SalesAgreement(SalesAgreementID)
+    FOREIGN KEY (SalesAgreementDetailID) REFERENCES SalesAgreementDetail(SalesAgreementDetailID)
 );
 
 -- 23. DealerInventory

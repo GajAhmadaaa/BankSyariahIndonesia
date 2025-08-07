@@ -122,11 +122,11 @@ erDiagram
 
     SalesAgreement ||--o{ SalesAgreementDetail : "memiliki rincian"
     SalesAgreement ||--o{ PaymentHistory : "memiliki"
-    SalesAgreement ||--o{ VehicleRegistration : "membutuhkan"
+    SalesAgreementDetail ||--o{ VehicleRegistration : "membutuhkan"
     SalesAgreement ||--o{ CarDelivery : "menghasilkan"
-    SalesAgreement ||--o{ ServiceHistory : "memiliki"
+    SalesAgreementDetail ||--o{ ServiceHistory : "memiliki"
     SalesAgreement ||--o{ CustomerComplaint : "terkait"
-    SalesAgreement ||--o{ WarrantyClaim : "terkait"
+    SalesAgreementDetail ||--o{ WarrantyClaim : "terkait"
     SalesAgreement ||--o{ CustomerFeedback : "subjek dari"
 
     LetterOfIntentDetail o|--|| SalesAgreementDetail : "dirinci dalam"
@@ -293,7 +293,7 @@ erDiagram
 | Nama Kolom              | Tipe Data      | Keterangan                               |
 |-------------------------|----------------|------------------------------------------|
 | VehicleRegistrationID   | INT, PK        | ID unik untuk setiap administrasi        |
-| SalesAgreementID        | INT, FK        | ID transaksi terkait (Wajib diisi)       |
+| SalesAgreementDetailID  | INT, FK        | ID detail transaksi/unit terkait (Wajib diisi) |
 | RegistrationNumber      | VARCHAR(20)    | Nomor STNK                               |
 | OwnershipBookNumber     | VARCHAR(20)    | Nomor BPKB                               |
 | TaxStatus               | VARCHAR(20)    | Status pajak                             |
@@ -328,7 +328,7 @@ erDiagram
 | Nama Kolom       | Tipe Data      | Keterangan                               |
 |------------------|----------------|------------------------------------------|
 | ServiceID        | INT, PK        | ID unik untuk setiap layanan purna jual  |
-| SalesAgreementID | INT, FK        | ID transaksi terkait (Wajib diisi)       |
+| SalesAgreementDetailID | INT, FK   | ID detail transaksi/unit terkait (Wajib diisi) |
 | ServiceDate      | DATETIME       | Tanggal layanan (Wajib diisi)            |
 | ServiceType      | VARCHAR(50)    | Jenis layanan (e.g., Servis Pertama)     |
 | Note             | VARCHAR(200)   | Catatan dari layanan                     |
@@ -348,7 +348,7 @@ erDiagram
 |--------------------|----------------|------------------------------------------|
 | WarrantyClaimID    | INT, PK        | ID unik untuk setiap klaim garansi       |
 | CustomerID         | INT, FK        | ID pelanggan yang mengajukan klaim (Wajib diisi) |
-| SalesAgreementID   | INT, FK        | ID transaksi terkait (Wajib diisi)       |
+| SalesAgreementDetailID   | INT, FK   | ID detail transaksi/unit terkait (Wajib diisi) |
 | ClaimDate          | DATETIME       | Tanggal klaim (Wajib diisi)              |
 | Description        | VARCHAR(200)   | Deskripsi klaim                          |
 | Status             | VARCHAR(20)    | Status penanganan klaim                  |

@@ -124,6 +124,7 @@ Dokumentasi ini berisi penjelasan teknis lengkap: detail tabel, kolom, relasi, E
 | 25  | CustomerFeedback       | Feedback atau survey kepuasan pelanggan setelah transaksi.                      |
 
 ### Diagram Relasi (ERD)
+
 ```mermaid
 erDiagram
     Dealer ||--o{ SalesPerson : "memiliki"
@@ -172,11 +173,11 @@ erDiagram
 
     SalesAgreement ||--o{ SalesAgreementDetail : "memiliki rincian"
     SalesAgreement ||--o{ PaymentHistory : "memiliki"
-    SalesAgreement ||--o{ VehicleRegistration : "membutuhkan"
+    SalesAgreementDetail ||--o{ VehicleRegistration : "membutuhkan"
     SalesAgreement ||--o{ CarDelivery : "menghasilkan"
-    SalesAgreement ||--o{ ServiceHistory : "memiliki"
+    SalesAgreementDetail ||--o{ ServiceHistory : "memiliki"
     SalesAgreement ||--o{ CustomerComplaint : "terkait"
-    SalesAgreement ||--o{ WarrantyClaim : "terkait"
+    SalesAgreementDetail ||--o{ WarrantyClaim : "terkait"
     SalesAgreement ||--o{ CustomerFeedback : "subjek dari"
 
     LetterOfIntentDetail o|--|| SalesAgreementDetail : "dirinci dalam"
